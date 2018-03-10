@@ -23,11 +23,13 @@ public:
 
     std::string getMensagemErro() const { return this->mensagemErro;}
 
+    bool analisar();
     bool expressao();
     bool restoExpressao();
     bool termo();
     bool restoTermo();
     bool fator();
+    bool parenteses();
 };
 
 

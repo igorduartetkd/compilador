@@ -14,21 +14,17 @@ Token Scanner::proximoToken(){
     QString valorToken;
     QRegExp eRNumero("\\d");     //expressao regular para representar um digito
 
-    if(buffer.empty()){ // se o buffer estiver vazio
-        std::scanf("%c", &caracter);
-    }else{ //se o buffer tiver algo utiliza o que tem
-        caracter = buffer.front();
-        buffer.pop();
-    }
+    caracter = lerProximoChar();
     caracterQString = caracter;
 
     //ignorando espaços em branco e quebras de linha
-    if(caracter == ' ' || caracter == '\n'){
+    if(caracter == ' ' || caracter == '\n' || caracter == '\t'){
         return proximoToken();
     }
 
     //testa fim de arquivo
-    if(caracter == '\0' || caracter == 'EOF'){
+    if(caracter == EOF){
+        std::puts("Caracter fim de arquivo encontrado");
         return Token(ENUMS::EPSILON);
     }
 
@@ -47,7 +43,7 @@ Token Scanner::proximoToken(){
 
     if(caracter == '-'){
         //VERIFICAR SE PROXIMO E NUMERO NEGATIVO
-        scanf("%c", &caracter);
+        caracter = lerProximoChar();
         caracterQString = caracter;
         if(eRNumero.exactMatch(caracterQString)){// se for digito o token será numero
             valorToken = "-";
@@ -67,29 +63,24 @@ Token Scanner::proximoToken(){
         return Token(ENUMS::SUB);
     }
 
-    if(caracter == '+'){
+    if(caracter == '+')
         return Token(ENUMS::SOMA);
-    }
 
-    if(caracter == '*'){
+
+    if(caracter == '*')
         return Token(ENUMS::MUL);
 
-    }
-
-    if(caracter == '/'){
+    if(caracter == '/')
         return Token(ENUMS::DIV);
 
-    }
 
-    if(caracter == '('){
+    if(caracter == '(')
         return Token(ENUMS::ABREPARENTESE);
 
-    }
 
-    if(caracter == ')'){
+    if(caracter == ')')
         return Token(ENUMS::FECHAPARENTESE);
 
-    }
 
     //DEFAULT
     return Token(ENUMS::ERRO);
@@ -118,25 +109,36 @@ QString Scanner::lerRestoNumero(){
     QString valorToken;
     QRegExp eRNumero("\\d");     //expressao regular para representar um digito
 
-    std::scanf("%c", &caracter) ;           //lendo proximo caracter
+    caracter = lerProximoChar();           //lendo proximo caracter
     caracterQString = caracter;            //transformando para QString
 
-    if(eRNumero.exactMatch(caracterQString)){         //caracter e um digito?
+    if(eRNumero.exactMatch(caracterQString)){//caracter e um digito?
         valorToken = caracterQString;
         valorToken += lerRestoNumero();
         return valorToken;
-    }else
-        if(caracter == '.'){ //numero decimal é verificado posteriormente
-            valorToken = caracterQString;
-            valorToken += lerRestoNumero();
-            return valorToken;
-        }else
-            if(caracter == ' ' || caracter == '\n'){   // se for final de arquivo ou espaço em branco ou quebra de linha
-                return "\0";
-            }else{  //se for um operador
-                buffer.push(caracter);      //armazena o caracter em buffer para ser tratado na próxima chamada
-                return "\0";
-            }
+    }
+
+    if(caracter == '.'){ //numero decimal é verificado posteriormente
+        valorToken = caracterQString;
+        valorToken += lerRestoNumero();
+        return valorToken;
+    }
+
+    buffer.push(caracter);      //armazena o caracter em buffer para ser tratado na próxima chamada
+    return "";
+}
+
+char Scanner::lerProximoChar(){
+    char caracter;
+    if(buffer.empty()){ // se o buffer estiver vazio
+        if(std::scanf("%c", &caracter) != EOF)
+            return caracter;
+        return EOF;
+    }
+    //se o buffer tiver algo utiliza o que tem
+    caracter = buffer.front();
+    buffer.pop();
+    return caracter;
 }
 
 }//FIM DA NAMESPACE COMPILADOR

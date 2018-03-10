@@ -19,14 +19,14 @@ int main(int argc, char *argv[])
 //        delete token;
 //    }
 
+
     COMPILADOR::Parser parser;
-    if(parser.expressao()){
+    if(parser.analisar()){
          std::cout<<"Expressãao OK"<<std::endl;
     }else{
         std::cout<<parser.getMensagemErro()<<std::endl;
     }
 
 
-
-    return a.exec();
+    return 0;
 }

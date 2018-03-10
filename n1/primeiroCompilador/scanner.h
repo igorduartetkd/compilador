@@ -21,6 +21,7 @@ private:
     //metodos privados:
     ENUMS::tipoToken verificarEnumNumero(QString numero);
     QString lerRestoNumero();
+    char lerProximoChar();
 public:
     Scanner();
 

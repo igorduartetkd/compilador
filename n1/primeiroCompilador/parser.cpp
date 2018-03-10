@@ -8,9 +8,20 @@ Parser::Parser()
 {
 }
 
+bool Parser::analisar(){
+    if(expressao()){
+        if(lerProximoToken().getTipo() == ENUMS::EPSILON)
+            return true;
+
+        mensagemErro = "CARACTERES NO FINAL DO PROGRAMA";
+    }
+    return false;
+}
+
 bool Parser::expressao(){
     if(termo())
-        return restoExpressao();
+        if(restoExpressao())
+            return true;
 
     return false;
 }
@@ -22,18 +33,21 @@ bool Parser::restoExpressao(){//TERMINAL PRODUZ MSG DE ERRO
         return false;
     }
 
-    if(proximoToken.getTipo() == ENUMS::SOMA)
-        return termo();
+    if(proximoToken.getTipo() == ENUMS::SOMA){
+        if(termo())
+            return restoExpressao();
+        return false;
+     }
 
-    if(proximoToken.getTipo() == ENUMS::SUB)
-        return termo();
+    if(proximoToken.getTipo() == ENUMS::SUB){
+        if(termo())
+            return restoExpressao();
+        return false;
+    }
 
-
-    if(proximoToken.getTipo() == ENUMS::EPSILON)
-        return true;
-
-    mensagemErro = "ERRO SINTATICO";
-    return false;
+    //coringa
+    bufferToken.push(proximoToken);
+    return true;
 }
 
 bool Parser::termo(){
@@ -43,36 +57,36 @@ bool Parser::termo(){
     return false;
 }
 
-bool Parser::restoTermo(){//TERMINAL PRODUZ MSG DE ERRO
+bool Parser::restoTermo(){
     COMPILADOR::Token proximoToken = lerProximoToken();
     if(proximoToken.getTipo() == ENUMS::ERRO){
-        mensagemErro = "ERRO LEXICO: ESCREVE DIREITO";
+        mensagemErro = "ERRO LEXICO: ESCREVE DIREITO, PORRA";
         return false;
     }
 
     if(proximoToken.getTipo() == ENUMS::MUL)
-        return restoTermo();
+        if(fator())
+            return restoTermo();
 
     if(proximoToken.getTipo() == ENUMS::DIV){
         //Análise semantica:
         proximoToken = lerProximoToken();
-        if(proximoToken.getValorDouble() == 0 || proximoToken.getValorInt() == 0){
+        if((proximoToken.getTipo() == ENUMS::INT && proximoToken.getValorInt() == 0)  ||  (proximoToken.getTipo() == ENUMS::DOUBLE && proximoToken.getValorDouble() == 0)){
             mensagemErro = "ERRO SEMANTICO: VAI QUERER DIVIDIR POR ZERO MESMO?";
             return false;
         }
         bufferToken.push(proximoToken);
-        return restoTermo();
+        if(fator())
+            return restoTermo();
     }
 
-    if(proximoToken.getTipo() == ENUMS::EPSILON)
-        return true;
-
-    mensagemErro = "ERRO SINTATICO: ESPERADO UM OPERADOR";
-    return false;
+    //coringa
+    bufferToken.push(proximoToken);
+    return true;
 
 }
 
-bool Parser::fator(){ //TERMINAL, PRODUZ MSG DE ERRO
+bool Parser::fator(){
     COMPILADOR::Token proximoToken = lerProximoToken();
     if(proximoToken.getTipo() == ENUMS::ERRO){
         mensagemErro = "ERRO LEXICO: ESCREVE DIREITO";
@@ -92,6 +106,7 @@ bool Parser::fator(){ //TERMINAL, PRODUZ MSG DE ERRO
             }
             this->mensagemErro = "ERRO SINTATICO: FECHA PARENTESE MAIS NAO? SEU BOSTA";
         }
+        return false;
     }
 
     this->mensagemErro = "ERRO SINTATICO: ESPERADO UM NUMERO";
