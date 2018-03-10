@@ -2,11 +2,15 @@
 #define ENUMS_H
 namespace ENUMS {
 enum tipoToken{
-    NUM,
+    INT,
+    DOUBLE,
     SOMA,
     SUB,
     MUL,
     DIV,
+    EPSILON,
+    ABREPARENTESE,
+    FECHAPARENTESE,
     ERRO
 };
 }//FIM DA NAMESPACE ENUMS

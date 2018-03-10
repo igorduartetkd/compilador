@@ -14,5 +14,11 @@ Token::Token(ENUMS::tipoToken tipo, int valor):
 {
 }
 
+Token::Token(ENUMS::tipoToken tipo, double valor):
+    tipo(tipo),
+    valor(valor)
+{
+}
+
 
 }//FIM DA NAMESPACE COMPILADOR

@@ -4,6 +4,7 @@
 #include <stdio.h>      //scanf
 #include <QString>
 #include <regex>        //expressao regular regex
+#include <queue>
 #include "token.h"
 
 namespace COMPILADOR {
@@ -13,12 +14,18 @@ namespace COMPILADOR {
 class Scanner
 {
 private:
+    //atributos privados:
     Token *token;
+    std::queue<char> buffer;
 
+    //metodos privados:
+    ENUMS::tipoToken verificarEnumNumero(QString numero);
 public:
     Scanner();
 
+    //metodos publicos:
     Token* proximoToken();
+    QString lerRestoNumero();
 };
 
 

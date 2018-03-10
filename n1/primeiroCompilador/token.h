@@ -14,6 +14,7 @@ private:
 public:
     Token(ENUMS::tipoToken tipo);
     Token(ENUMS::tipoToken tipo, int valor);
+    Token(ENUMS::tipoToken tipo, double valor);
 
     //gets
     ENUMS::tipoToken getTipo() const    {return this->tipo;}
