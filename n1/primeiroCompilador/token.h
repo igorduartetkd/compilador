@@ -9,7 +9,8 @@ class Token
 {
 private:
     ENUMS::tipoToken tipo;
-    int valor;
+    int valorInt;
+    double valorDouble;
 
 public:
     Token(ENUMS::tipoToken tipo);
@@ -18,11 +19,13 @@ public:
 
     //gets
     ENUMS::tipoToken getTipo() const    {return this->tipo;}
-    int getValor() const                {return this->valor;}
+    int getValorInt() const                {return this->valorInt;}
+    int getValorDouble() const             {return this->valorDouble;}
 
     //sets
     void setTipo(ENUMS::tipoToken tipo) {this->tipo = tipo;}
-    void setValor(int valor)            {this->valor = valor;}
+    void setValorInt(int valor)            {this->valorInt = valor;}
+    void setValorDouble(int valor)            {this->valorDouble = valor;}
 };
 
 

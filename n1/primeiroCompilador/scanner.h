@@ -3,7 +3,7 @@
 
 #include <stdio.h>      //scanf
 #include <QString>
-#include <regex>        //expressao regular regex
+#include <QRegExp>        //expressao regular Do QT
 #include <queue>
 #include "token.h"
 
@@ -20,12 +20,13 @@ private:
 
     //metodos privados:
     ENUMS::tipoToken verificarEnumNumero(QString numero);
+    QString lerRestoNumero();
 public:
     Scanner();
 
     //metodos publicos:
-    Token* proximoToken();
-    QString lerRestoNumero();
+    Token proximoToken();
+
 };
 
 

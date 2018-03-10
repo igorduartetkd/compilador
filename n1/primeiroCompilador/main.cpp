@@ -1,7 +1,7 @@
 #include <QCoreApplication>
-
-#include "QString"
 #include <iostream>
+
+#include "parser.h"
 
 using namespace std;
 
@@ -9,12 +9,24 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    QString teste;
-    teste = "-12.5";
+     //teste do scanner OK
+//    COMPILADOR::Scanner scaner;
+//    COMPILADOR::Token *token;
 
-    double numero= teste.toDouble();
+//    while(true){
+//        token = scaner.proximoToken();
+//        std::cout<<"Tipo: "<<token->getTipo()<<" valor int: "<<token->getValorInt()<<" valor double: "<<token->getValorDouble()<<std::endl;
+//        delete token;
+//    }
 
-    std::cout<<numero<<std::endl;
+    COMPILADOR::Parser parser;
+    if(parser.expressao()){
+         std::cout<<"Expressãao OK"<<std::endl;
+    }else{
+        std::cout<<parser.getMensagemErro()<<std::endl;
+    }
+
+
 
     return a.exec();
 }

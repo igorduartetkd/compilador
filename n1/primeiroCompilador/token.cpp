@@ -4,19 +4,22 @@ namespace COMPILADOR {
 
 Token::Token(ENUMS::tipoToken tipo):
     tipo(tipo),
-    valor(0)
+    valorInt(0),
+    valorDouble(0)
 {
 }
 
 Token::Token(ENUMS::tipoToken tipo, int valor):
     tipo(tipo),
-    valor(valor)
+    valorInt(valor),
+    valorDouble(0)
 {
 }
 
 Token::Token(ENUMS::tipoToken tipo, double valor):
     tipo(tipo),
-    valor(valor)
+    valorInt(0),
+    valorDouble(valor)
 {
 }
 

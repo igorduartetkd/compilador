@@ -8,11 +8,11 @@ Scanner::Scanner():
 {
 }
 /* --- PROXIMOS PASSOS: SUBSTITUIR BIBLIOTECA DE EXPRESSAO REGULAR PELA QRegExp --- */
-Token* Scanner::proximoToken(){
+Token Scanner::proximoToken(){
     char caracter;
     QString caracterQString;
     QString valorToken;
-    std::regex eRNumero("[[:digit:]]");     //expressao regular para representar um digito
+    QRegExp eRNumero("\\d");     //expressao regular para representar um digito
 
     if(buffer.empty()){ // se o buffer estiver vazio
         std::scanf("%c", &caracter);
@@ -28,70 +28,71 @@ Token* Scanner::proximoToken(){
     }
 
     //testa fim de arquivo
-    if(caracter == '\0'){
-        return new Token(ENUMS::EPSILON);
+    if(caracter == '\0' || caracter == 'EOF'){
+        return Token(ENUMS::EPSILON);
     }
 
     //testa se é digito
-    if(std::regex_match(caracterQString.toStdString(), eRNumero)){
+    if(eRNumero.exactMatch(caracterQString)){
         valorToken = caracterQString;
         valorToken += lerRestoNumero();
         ENUMS::tipoToken tipoToken = verificarEnumNumero(valorToken);
         if(tipoToken == ENUMS::INT){ //se o tipo for inteiro
-            return new Token(tipoToken, valorToken.toInt());
+            return Token(tipoToken, valorToken.toInt());
         }else{ //se o tipo for double, ou então se for erro vai junto
-            return new Token(tipoToken, valorToken.toDouble());
+            return Token(tipoToken, valorToken.toDouble());
         }
 
     }
 
     if(caracter == '-'){
-        //VERIFICAR SE PROXIMO E NUMERO COLADO
+        //VERIFICAR SE PROXIMO E NUMERO NEGATIVO
         scanf("%c", &caracter);
         caracterQString = caracter;
-        if(std::regex_match(caracterQString.toStdString(), eRNumero)){// se for digito o token será numero
+        if(eRNumero.exactMatch(caracterQString)){// se for digito o token será numero
             valorToken = "-";
+            valorToken.append(caracter);
             valorToken += lerRestoNumero();
             ENUMS::tipoToken tipoToken = verificarEnumNumero(valorToken);
             if(tipoToken == ENUMS::INT){ //se o tipo for inteiro
-                return new Token(tipoToken, valorToken.toInt());
+                return Token(tipoToken, valorToken.toInt());
             }else{ //se o tipo for double, ou então se for erro vai junto
-                return new Token(tipoToken, valorToken.toDouble());
+                return Token(tipoToken, valorToken.toDouble());
             }
 
         }
 
         //nao é um numero, ou seja, é um operador -
         this->buffer.push(caracter); //armazena o caracter lido para saber se era numero
-        return new Token(ENUMS::SUB);
+        return Token(ENUMS::SUB);
     }
 
     if(caracter == '+'){
-        return new Token(ENUMS::SOMA);
+        return Token(ENUMS::SOMA);
     }
 
     if(caracter == '*'){
-        return new Token(ENUMS::MUL);
+        return Token(ENUMS::MUL);
 
     }
 
     if(caracter == '/'){
-        return new Token(ENUMS::DIV);
+        return Token(ENUMS::DIV);
 
     }
 
     if(caracter == '('){
-        return new Token(ENUMS::ABREPARENTESE);
+        return Token(ENUMS::ABREPARENTESE);
 
     }
 
     if(caracter == ')'){
-        return new Token(ENUMS::FECHAPARENTESE);
+        return Token(ENUMS::FECHAPARENTESE);
 
     }
 
     //DEFAULT
-    return new Token(ENUMS::ERRO);
+    return Token(ENUMS::ERRO);
 
 
 }
@@ -102,7 +103,7 @@ ENUMS::tipoToken Scanner::verificarEnumNumero(QString numero){
     int qntPontos = numero.count('.');  //conta a quantidade de ocorrencias do caracter '.'
     if(qntPontos == 0)
         return ENUMS::INT;
-    if(qntPontos == 0)
+    if(qntPontos == 1)
         return ENUMS::DOUBLE;
 
     return ENUMS::ERRO;
@@ -113,24 +114,24 @@ ENUMS::tipoToken Scanner::verificarEnumNumero(QString numero){
  a ultima leitura, que pode ser um caractere, em buffer*/
 QString Scanner::lerRestoNumero(){
     char caracter;
-    QString caracterToString;
+    QString caracterQString;
     QString valorToken;
-    std::regex eRNumero("[[:digit:]]");     //expressao regular para representar um digito
+    QRegExp eRNumero("\\d");     //expressao regular para representar um digito
 
-    std::scanf(" %c", &caracter) ;           //lendo proximo caracter
-    caracterToString = caracter;            //transformando para QString
+    std::scanf("%c", &caracter) ;           //lendo proximo caracter
+    caracterQString = caracter;            //transformando para QString
 
-    if(std::regex_match(caracterToString.toStdString(), eRNumero)){         //caracter e um digito?
-        valorToken = caracterToString;
+    if(eRNumero.exactMatch(caracterQString)){         //caracter e um digito?
+        valorToken = caracterQString;
         valorToken += lerRestoNumero();
         return valorToken;
     }else
-        if(caracter == '.'){ //agora fudeu muito
-            valorToken = caracterToString;
+        if(caracter == '.'){ //numero decimal é verificado posteriormente
+            valorToken = caracterQString;
             valorToken += lerRestoNumero();
             return valorToken;
         }else
-            if(caracter == '\0'){   // se for final de arquivo
+            if(caracter == ' ' || caracter == '\n'){   // se for final de arquivo ou espaço em branco ou quebra de linha
                 return "\0";
             }else{  //se for um operador
                 buffer.push(caracter);      //armazena o caracter em buffer para ser tratado na próxima chamada
