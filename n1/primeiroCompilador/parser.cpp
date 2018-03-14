@@ -13,15 +13,14 @@ bool Parser::analisar(){
         if(lerProximoToken().getTipo() == ENUMS::EPSILON)
             return true;
 
-        mensagemErro = "CARACTERES NO FINAL DO PROGRAMA";
+        mensagemErro += "CARACTERES NO FINAL DO PROGRAMA\n";
     }
     return false;
 }
 
 bool Parser::expressao(){
     if(termo())
-        if(restoExpressao())
-            return true;
+        return restoExpressao();
 
     return false;
 }
@@ -29,19 +28,21 @@ bool Parser::expressao(){
 bool Parser::restoExpressao(){//TERMINAL PRODUZ MSG DE ERRO
     COMPILADOR::Token proximoToken = lerProximoToken();
     if(proximoToken.getTipo() == ENUMS::ERRO){
-        mensagemErro = "ERRO LEXICO: ESCREVE DIREITO";
+        mensagemErro += "ERRO LEXICO: ESCREVE DIREITO\n";
         return false;
     }
 
     if(proximoToken.getTipo() == ENUMS::SOMA){
         if(termo())
             return restoExpressao();
+        mensagemErro += "ERRO SINTATICO: EXPRESSAO NAO ENCONTRADA APOS SINAL DE ADIÇÃO\n";
         return false;
      }
 
     if(proximoToken.getTipo() == ENUMS::SUB){
         if(termo())
             return restoExpressao();
+        mensagemErro += "ERRO SINTATICO: EXPRESSAO NAO ENCONTRADA APOS SINAL DE SUBTRAÇÃO\n";
         return false;
     }
 
@@ -60,24 +61,30 @@ bool Parser::termo(){
 bool Parser::restoTermo(){
     COMPILADOR::Token proximoToken = lerProximoToken();
     if(proximoToken.getTipo() == ENUMS::ERRO){
-        mensagemErro = "ERRO LEXICO: ESCREVE DIREITO, PORRA";
+        mensagemErro += "ERRO LEXICO: ESCREVE DIREITO, PORRA\n";
         return false;
     }
 
-    if(proximoToken.getTipo() == ENUMS::MUL)
+    if(proximoToken.getTipo() == ENUMS::MUL){
         if(fator())
             return restoTermo();
+        mensagemErro += "ERRO SINTATICO: NAO ENCONTRADO OPERADOR APOS MULTIPLICAÇÃO\n";
+        return false;
+    }
 
     if(proximoToken.getTipo() == ENUMS::DIV){
         //Análise semantica:
         proximoToken = lerProximoToken();
         if((proximoToken.getTipo() == ENUMS::INT && proximoToken.getValorInt() == 0)  ||  (proximoToken.getTipo() == ENUMS::DOUBLE && proximoToken.getValorDouble() == 0)){
-            mensagemErro = "ERRO SEMANTICO: VAI QUERER DIVIDIR POR ZERO MESMO?";
+            mensagemErro += "ERRO SEMANTICO: VAI QUERER DIVIDIR POR ZERO MESMO?\n";
             return false;
         }
         bufferToken.push(proximoToken);
         if(fator())
             return restoTermo();
+
+        mensagemErro += "ERRO SINTATICO: NAO ENCONTRADO OPERADOR APOS DIVISAO\n";
+        return false;
     }
 
     //coringa
@@ -89,7 +96,7 @@ bool Parser::restoTermo(){
 bool Parser::fator(){
     COMPILADOR::Token proximoToken = lerProximoToken();
     if(proximoToken.getTipo() == ENUMS::ERRO){
-        mensagemErro = "ERRO LEXICO: ESCREVE DIREITO";
+        mensagemErro += "ERRO LEXICO: ESCREVE DIREITO\n";
         return false;
     }
 
@@ -104,12 +111,14 @@ bool Parser::fator(){
             if(lerProximoToken().getTipo() == ENUMS::FECHAPARENTESE){
                 return true;
             }
-            this->mensagemErro = "ERRO SINTATICO: FECHA PARENTESE MAIS NAO? SEU BOSTA";
+            this->mensagemErro += "ERRO SINTATICO: FECHA PARENTESE MAIS NAO? SEU BOSTA\n";
+            return false;
         }
+        this->mensagemErro += "NAO ENCONTRADA EXPRESSAO APOS ABRIR PARENTESE\n";
         return false;
     }
 
-    this->mensagemErro = "ERRO SINTATICO: ESPERADO UM NUMERO";
+    this->mensagemErro += "ERRO SINTATICO: ESPERADO UM NUMERO\n";
     return false;
 
 }
