@@ -3,8 +3,7 @@
 namespace COMPILADOR {
 
 
-Scanner::Scanner():
-    token(0)
+Scanner::Scanner()
 {
 }
 /* --- PROXIMOS PASSOS: SUBSTITUIR BIBLIOTECA DE EXPRESSAO REGULAR PELA QRegExp --- */
@@ -24,7 +23,6 @@ Token Scanner::proximoToken(){
 
     //testa fim de arquivo
     if(caracter == EOF){
-        std::puts("Caracter fim de arquivo encontrado");
         return Token(ENUMS::EPSILON);
     }
 

@@ -3,7 +3,10 @@
 
 #include <string>
 #include <queue>
+#include <stack>
 #include "scanner.h"
+
+#include<iostream>
 
 namespace COMPILADOR {
 
@@ -15,6 +18,7 @@ private:
     COMPILADOR::Scanner scanner;
     std::string mensagemErro;
     std::queue<COMPILADOR::Token> bufferToken;
+    std::stack <double> numeroArmazenado;
 
     //metodos privados:
     COMPILADOR::Token lerProximoToken();
@@ -22,6 +26,7 @@ public:
     Parser();
 
     std::string getMensagemErro() const { return this->mensagemErro;}
+    double  getResultadoExpressao() const { return this->numeroArmazenado.top();}
 
     bool analisar();
     bool expressao();

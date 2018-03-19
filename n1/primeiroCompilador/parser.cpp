@@ -19,8 +19,9 @@ bool Parser::analisar(){
 }
 
 bool Parser::expressao(){
-    if(termo())
+    if(termo()){
         return restoExpressao();
+    }
 
     return false;
 }
@@ -33,15 +34,30 @@ bool Parser::restoExpressao(){//TERMINAL PRODUZ MSG DE ERRO
     }
 
     if(proximoToken.getTipo() == ENUMS::SOMA){
-        if(termo())
+        if(termo()){
+            double op1, op2;
+            op2 = numeroArmazenado.top();
+            numeroArmazenado.pop();
+            op1 = numeroArmazenado.top();
+            numeroArmazenado.pop();
+            numeroArmazenado.push(op1+op2);
+
             return restoExpressao();
+        }
         mensagemErro += "ERRO SINTATICO: EXPRESSAO NAO ENCONTRADA APOS SINAL DE ADIÇÃO\n";
         return false;
      }
 
     if(proximoToken.getTipo() == ENUMS::SUB){
-        if(termo())
+        if(termo()){
+            double op1, op2;
+            op2 = numeroArmazenado.top();
+            numeroArmazenado.pop();
+            op1 = numeroArmazenado.top();
+            numeroArmazenado.pop();
+            numeroArmazenado.push(op1-op2);
             return restoExpressao();
+        }
         mensagemErro += "ERRO SINTATICO: EXPRESSAO NAO ENCONTRADA APOS SINAL DE SUBTRAÇÃO\n";
         return false;
     }
@@ -66,8 +82,16 @@ bool Parser::restoTermo(){
     }
 
     if(proximoToken.getTipo() == ENUMS::MUL){
-        if(fator())
+        if(fator()){
+            double op1, op2;
+            op2 = numeroArmazenado.top();
+            numeroArmazenado.pop();
+            op1 = numeroArmazenado.top();
+            numeroArmazenado.pop();
+            numeroArmazenado.push(op1*op2);
+
             return restoTermo();
+        }
         mensagemErro += "ERRO SINTATICO: NAO ENCONTRADO OPERADOR APOS MULTIPLICAÇÃO\n";
         return false;
     }
@@ -80,8 +104,16 @@ bool Parser::restoTermo(){
             return false;
         }
         bufferToken.push(proximoToken);
-        if(fator())
+        if(fator()){
+            double op1, op2;
+            op2 = numeroArmazenado.top();
+            numeroArmazenado.pop();
+            op1 = numeroArmazenado.top();
+            numeroArmazenado.pop();
+            numeroArmazenado.push(op1/op2);
+
             return restoTermo();
+        }
 
         mensagemErro += "ERRO SINTATICO: NAO ENCONTRADO OPERADOR APOS DIVISAO\n";
         return false;
@@ -100,11 +132,15 @@ bool Parser::fator(){
         return false;
     }
 
-    if(proximoToken.getTipo() == ENUMS::INT)
+    if(proximoToken.getTipo() == ENUMS::INT){
+        numeroArmazenado.push(proximoToken.getValorInt());
         return true;
+    }
 
-    if(proximoToken.getTipo() == ENUMS::DOUBLE)
+    if(proximoToken.getTipo() == ENUMS::DOUBLE){
+        numeroArmazenado.push(proximoToken.getValorDouble());
         return true;
+    }
 
     if(proximoToken.getTipo() == ENUMS::ABREPARENTESE){
         if(expressao()){

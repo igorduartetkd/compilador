@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 
     COMPILADOR::Parser parser;
     if(parser.analisar()){
-         std::cout<<"Expressãao OK"<<std::endl;
+         std::cout<<"Resultado da expressão: "<<parser.getResultadoExpressao()<<std::endl;
     }else{
         std::cout<<parser.getMensagemErro()<<std::endl;
     }

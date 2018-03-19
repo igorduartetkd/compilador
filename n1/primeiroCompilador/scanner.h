@@ -15,7 +15,6 @@ class Scanner
 {
 private:
     //atributos privados:
-    Token *token;
     std::queue<char> buffer;
 
     //metodos privados:
