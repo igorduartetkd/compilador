@@ -4,23 +4,25 @@
 #include <string>
 #include <queue>
 #include <stack>
-#include <fstream>
 #include "scanner.h"
+#include "manipulacaoarquivo.h"
+#include "geradorcodigoassembly.h"
 
 #include<iostream>
 
 namespace COMPILADOR {
 
 
-
 class Parser
 {
 private:
-    FILE* arquivoEscrita;
+
     COMPILADOR::Scanner scanner;
+    ManipulacaoArquivo* arquivoEscrita;
     std::string mensagemErro;
     std::queue<COMPILADOR::Token> bufferToken;
     std::stack <double> numeroArmazenado;
+    COMPILADOR::GeradorCodigoAssembly geradorCodigo;
 
     //metodos privados:
     COMPILADOR::Token lerProximoToken();

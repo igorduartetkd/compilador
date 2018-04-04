@@ -31,10 +31,13 @@ Token Scanner::proximoToken(){
         valorToken = caracterQString;
         valorToken += lerRestoNumero();
         ENUMS::tipoToken tipoToken = verificarEnumNumero(valorToken);
+        ENUMS::numeroTipo valor;
         if(tipoToken == ENUMS::INT){ //se o tipo for inteiro
-            return Token(tipoToken, valorToken.toInt());
+            valor.inteiro = valorToken.toInt();
+            return Token(tipoToken, valor);
         }else{ //se o tipo for double, ou então se for erro vai junto
-            return Token(tipoToken, valorToken.toDouble());
+            valor.real = valorToken.toDouble();
+            return Token(tipoToken, valor);
         }
 
     }
@@ -48,10 +51,13 @@ Token Scanner::proximoToken(){
             valorToken.append(caracter);
             valorToken += lerRestoNumero();
             ENUMS::tipoToken tipoToken = verificarEnumNumero(valorToken);
+            ENUMS::numeroTipo valor;
             if(tipoToken == ENUMS::INT){ //se o tipo for inteiro
-                return Token(tipoToken, valorToken.toInt());
+                valor.inteiro = valorToken.toInt();
+                return Token(tipoToken, valor);
             }else{ //se o tipo for double, ou então se for erro vai junto
-                return Token(tipoToken, valorToken.toDouble());
+                valor.real = valorToken.toDouble();
+                return Token(tipoToken, valor);
             }
 
         }

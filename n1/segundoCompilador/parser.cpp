@@ -7,58 +7,28 @@ namespace COMPILADOR {
 Parser::Parser():
     arquivoEscrita(0)
 {
-    arquivoEscrita = std::fopen("arquivoGerado.asm", "wt");
-    if(arquivoEscrita == NULL){
-        std::cout<<"problema na criação do arquivo"<<std::endl;
-        exit(1);
-    }
 
-    std::fprintf(arquivoEscrita, "\tglobal main\n");
-    std::fprintf(arquivoEscrita, "\textern printf, scanf\n");
-    std::fprintf(arquivoEscrita, "\n\tsection .data\t\t\t;contem as constantes\n");
-
-    //adicionando macro para somar
-    std::fprintf(arquivoEscrita, "\n\t%%macro somar\t\t\t;macro para somar\n");
-    std::fprintf(arquivoEscrita, "\t\tpop rcx\t\t\t;desempilha o segundo operador\n");
-    std::fprintf(arquivoEscrita, "\t\tpop rbx\t\t\t;desempilha o primeiro operador\n");
-    std::fprintf(arquivoEscrita, "\t\tadd rbx, rcx\t\t;soma rbx a rcx e guarda em rbx\n");
-    std::fprintf(arquivoEscrita, "\t\tpush rbx\t\t;empilha o resultado\n");
-    std::fprintf(arquivoEscrita, "\t\%%endmacro \t\t\t;sai da macro\n");
-
-    //adicionando macro para subtrair
-    std::fprintf(arquivoEscrita, "\n\t\%%macro subtrair\t\t\t;macro para subtrair\n");
-    std::fprintf(arquivoEscrita, "\t\tpop rcx\t\t\t;desempilha o segundo operador\n");
-    std::fprintf(arquivoEscrita, "\t\tpop rbx\t\t\t;desempilha o primeiro operador\n");
-    std::fprintf(arquivoEscrita, "\t\tsub rbx, rcx\t\t;subtrai rbx = rbx - rcx\n");
-    std::fprintf(arquivoEscrita, "\t\tpush rbx\t\t;empilha o resultado\n");
-    std::fprintf(arquivoEscrita, "\t\%%endmacro \t\t\t;sai da macro\n");
-
-    //adicionando macro para multiplicar
-    std::fprintf(arquivoEscrita, "\n\t\%%macro multiplicar\t\t;macro para multiplicar\n");
-    std::fprintf(arquivoEscrita, "\t\tpop rdx\t\t\t;desempilha o segundo operador\n");
-    std::fprintf(arquivoEscrita, "\t\tpop rax\t\t\t;desempilha o primeiro operador\n");
-    std::fprintf(arquivoEscrita, "\t\tmul rdx\t\t\t;multiplica rax = rax * rdx\n");
-    std::fprintf(arquivoEscrita, "\t\tpush rbx\t\t;empilha o resultado\n");
-    std::fprintf(arquivoEscrita, "\t\%%endmacro \t\t\t;sai da macro\n");
+      arquivoEscrita = new ManipulacaoArquivo("produzido.asm", ESCRITA);
+      arquivoEscrita->escrever(geradorCodigo.gerarCabecalho());
 
 
-    //adicionando macro para dividir
-    std::fprintf(arquivoEscrita, "\n\t\%%macro dividir\t\t\t;macro para dividir\n");
-    std::fprintf(arquivoEscrita, "\t\tpop rdx\t\t\t;desempilha o segundo operador\n");
-    std::fprintf(arquivoEscrita, "\t\tpop rax\t\t\t;desempilha o primeiro operador\n");
-    std::fprintf(arquivoEscrita, "\t\tdiv rdx\t\t\t;divide rax = rax / rdx\n");
-    std::fprintf(arquivoEscrita, "\t\tpush rbx\t\t;empilha o resultado\n");
-    std::fprintf(arquivoEscrita, "\t\%%endmacro \t\t\t;sai da macro\n");
+      //escrevendo as macros
+      arquivoEscrita->escrever(geradorCodigo.gerarComentario("Início da definição das macros"));
+      arquivoEscrita->escrever(geradorCodigo.gerarMacro(ENUMS::INT));
+//      arquivoEscrita->escrever(geradorCodigo.gerarMacro(ENUMS::SOMA));
+//      arquivoEscrita->escrever(geradorCodigo.gerarMacro(ENUMS::SUB));
+//      arquivoEscrita->escrever(geradorCodigo.gerarMacro(ENUMS::MUL));
+//      arquivoEscrita->escrever(geradorCodigo.gerarMacro(ENUMS::DIV));
 
-    //inicio do codigo
-    std::fprintf(arquivoEscrita, "\n\tsection .text\n");
-    std::fprintf(arquivoEscrita, "\tmain:\n");
+      //inicio das instruções:
+      arquivoEscrita->escrever(geradorCodigo.gerarInicioCodigo());
 
 
 }
 
 Parser::~Parser(){
-     std::fprintf(arquivoEscrita, "\n\tret\t\t\t\t;final do programa\n");
+    arquivoEscrita->escrever(geradorCodigo.gerarFinalArquivo());
+    delete arquivoEscrita;
 }
 
 bool Parser::analisar(){
@@ -97,8 +67,7 @@ bool Parser::restoExpressao(){//TERMINAL PRODUZ MSG DE ERRO
             numeroArmazenado.push(op1+op2);
 
             //compilador
-            std::fprintf(arquivoEscrita, "\n\t\tsomar\t\t\t;chama macro de soma\n");
-
+            arquivoEscrita->escrever(geradorCodigo.gerarOperacao(ENUMS::SOMA));
 
             return restoExpressao();
         }
@@ -115,10 +84,11 @@ bool Parser::restoExpressao(){//TERMINAL PRODUZ MSG DE ERRO
             op1 = numeroArmazenado.top();
             numeroArmazenado.pop();
             numeroArmazenado.push(op1-op2);
-            return restoExpressao();
 
             //compilador
-            std::fprintf(arquivoEscrita, "\n\t\tsubtrair\t\t\t;chama macro de subtrair\n");
+           arquivoEscrita->escrever(geradorCodigo.gerarOperacao(ENUMS::SUB));
+
+           return restoExpressao();
         }
         mensagemErro += "ERRO SINTATICO: EXPRESSAO NAO ENCONTRADA APOS SINAL DE SUBTRAÇÃO\n";
         return false;
@@ -154,7 +124,7 @@ bool Parser::restoTermo(){
             numeroArmazenado.push(op1*op2);
 
             //compilador
-            std::fprintf(arquivoEscrita, "\n\t\tmultiplicar\t\t;chama macro de multiplicar\n");
+            arquivoEscrita->escrever(geradorCodigo.gerarOperacao(ENUMS::MUL));
             return restoTermo();
         }
         mensagemErro += "ERRO SINTATICO: NAO ENCONTRADO OPERADOR APOS MULTIPLICAÇÃO\n";
@@ -164,7 +134,7 @@ bool Parser::restoTermo(){
     if(proximoToken.getTipo() == ENUMS::DIV){
         //Análise semantica:
         proximoToken = lerProximoToken();
-        if((proximoToken.getTipo() == ENUMS::INT && proximoToken.getValorInt() == 0)  ||  (proximoToken.getTipo() == ENUMS::DOUBLE && proximoToken.getValorDouble() == 0)){
+        if((proximoToken.getTipo() == ENUMS::INT && proximoToken.getValor().inteiro == 0)  ||  (proximoToken.getTipo() == ENUMS::DOUBLE && proximoToken.getValor().real == 0)){
             mensagemErro += "ERRO SEMANTICO: VAI QUERER DIVIDIR POR ZERO MESMO?\n";
             return false;
         }
@@ -179,7 +149,7 @@ bool Parser::restoTermo(){
             numeroArmazenado.push(op1/op2);
 
             //compilador
-            std::fprintf(arquivoEscrita, "\n\t\tdividir\t\t\t;chama macro de dividir\n");
+            arquivoEscrita->escrever(geradorCodigo.gerarOperacao(ENUMS::DIV));
             return restoTermo();
         }
 
@@ -201,16 +171,24 @@ bool Parser::fator(){
     }
 
     if(proximoToken.getTipo() == ENUMS::INT){
+        ENUMS::numeroTipo numero;
+        numero.inteiro= proximoToken.getValor().inteiro;
         //tradutor
-        numeroArmazenado.push(proximoToken.getValorInt());
+        numeroArmazenado.push(numero.inteiro);
 
         //compilador
-        std::fprintf(arquivoEscrita, "\t\tpush,%d\t\t\t;Empilha o numero encontrado\n", proximoToken.getValorInt());
+        arquivoEscrita->escrever(geradorCodigo.gerarEmpilhaNumero(ENUMS::INT, numero));
         return true;
     }
 
     if(proximoToken.getTipo() == ENUMS::DOUBLE){
-        numeroArmazenado.push(proximoToken.getValorDouble());
+        ENUMS::numeroTipo numero;
+        numero.real = proximoToken.getValor().real;
+        //tradutor
+        numeroArmazenado.push(numero.real);
+
+        //compilador
+        arquivoEscrita->escrever(geradorCodigo.gerarEmpilhaNumero(ENUMS::DOUBLE, numero));
         return true;
     }
 

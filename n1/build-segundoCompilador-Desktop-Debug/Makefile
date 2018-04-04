@@ -51,11 +51,15 @@ OBJECTS_DIR   = ./
 SOURCES       = ../segundoCompilador/main.cpp \
 		../segundoCompilador/token.cpp \
 		../segundoCompilador/scanner.cpp \
-		../segundoCompilador/parser.cpp 
+		../segundoCompilador/parser.cpp \
+		../segundoCompilador/manipulacaoarquivo.cpp \
+		../segundoCompilador/geradorcodigoassembly.cpp 
 OBJECTS       = main.o \
 		token.o \
 		scanner.o \
-		parser.o
+		parser.o \
+		manipulacaoarquivo.o \
+		geradorcodigoassembly.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/linux.conf \
@@ -98,6 +102,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_config.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_post.prf \
+		../segundoCompilador/.qmake.stash \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/toolchain.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf \
@@ -117,10 +122,14 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		../segundoCompilador/segundoCompilador.pro ../segundoCompilador/token.h \
 		../segundoCompilador/enums.h \
 		../segundoCompilador/scanner.h \
-		../segundoCompilador/parser.h ../segundoCompilador/main.cpp \
+		../segundoCompilador/parser.h \
+		../segundoCompilador/manipulacaoarquivo.h \
+		../segundoCompilador/geradorcodigoassembly.h ../segundoCompilador/main.cpp \
 		../segundoCompilador/token.cpp \
 		../segundoCompilador/scanner.cpp \
-		../segundoCompilador/parser.cpp
+		../segundoCompilador/parser.cpp \
+		../segundoCompilador/manipulacaoarquivo.cpp \
+		../segundoCompilador/geradorcodigoassembly.cpp
 QMAKE_TARGET  = segundoCompilador
 DESTDIR       = 
 TARGET        = segundoCompilador
@@ -174,6 +183,7 @@ Makefile: ../segundoCompilador/segundoCompilador.pro /usr/lib/x86_64-linux-gnu/q
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_config.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/toolchain.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf \
@@ -235,6 +245,7 @@ Makefile: ../segundoCompilador/segundoCompilador.pro /usr/lib/x86_64-linux-gnu/q
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_config.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.conf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_post.prf:
+.qmake.stash:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/toolchain.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf:
@@ -267,8 +278,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents ../segundoCompilador/token.h ../segundoCompilador/enums.h ../segundoCompilador/scanner.h ../segundoCompilador/parser.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../segundoCompilador/main.cpp ../segundoCompilador/token.cpp ../segundoCompilador/scanner.cpp ../segundoCompilador/parser.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../segundoCompilador/token.h ../segundoCompilador/enums.h ../segundoCompilador/scanner.h ../segundoCompilador/parser.h ../segundoCompilador/manipulacaoarquivo.h ../segundoCompilador/geradorcodigoassembly.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../segundoCompilador/main.cpp ../segundoCompilador/token.cpp ../segundoCompilador/scanner.cpp ../segundoCompilador/parser.cpp ../segundoCompilador/manipulacaoarquivo.cpp ../segundoCompilador/geradorcodigoassembly.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -311,7 +322,8 @@ compiler_clean:
 main.o: ../segundoCompilador/main.cpp ../segundoCompilador/parser.h \
 		../segundoCompilador/scanner.h \
 		../segundoCompilador/token.h \
-		../segundoCompilador/enums.h
+		../segundoCompilador/enums.h \
+		../segundoCompilador/manipulacaoarquivo.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../segundoCompilador/main.cpp
 
 token.o: ../segundoCompilador/token.cpp ../segundoCompilador/token.h \
@@ -326,8 +338,16 @@ scanner.o: ../segundoCompilador/scanner.cpp ../segundoCompilador/scanner.h \
 parser.o: ../segundoCompilador/parser.cpp ../segundoCompilador/parser.h \
 		../segundoCompilador/scanner.h \
 		../segundoCompilador/token.h \
-		../segundoCompilador/enums.h
+		../segundoCompilador/enums.h \
+		../segundoCompilador/manipulacaoarquivo.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o parser.o ../segundoCompilador/parser.cpp
+
+manipulacaoarquivo.o: ../segundoCompilador/manipulacaoarquivo.cpp ../segundoCompilador/manipulacaoarquivo.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o manipulacaoarquivo.o ../segundoCompilador/manipulacaoarquivo.cpp
+
+geradorcodigoassembly.o: ../segundoCompilador/geradorcodigoassembly.cpp ../segundoCompilador/geradorcodigoassembly.h \
+		../segundoCompilador/enums.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o geradorcodigoassembly.o ../segundoCompilador/geradorcodigoassembly.cpp
 
 ####### Install
 

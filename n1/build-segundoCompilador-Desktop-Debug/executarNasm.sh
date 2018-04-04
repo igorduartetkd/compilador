@@ -1,0 +1,12 @@
+
+#!/bin/bash
+
+
+
+NOME_PROGRAMA=$1
+
+nasm -f elf64 $NOME_PROGRAMA.asm
+
+gcc-4.9 $NOME_PROGRAMA.o -o $NOME_PROGRAMA
+
+./$NOME_PROGRAMA

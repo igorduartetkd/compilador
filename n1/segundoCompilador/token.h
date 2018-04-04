@@ -6,27 +6,24 @@
 
 namespace COMPILADOR{
 
+
 class Token
 {
 private:
     ENUMS::tipoToken tipo;
-    int valorInt;
-    double valorDouble;
+    ENUMS::numeroTipo valor;
 
 public:
     Token(ENUMS::tipoToken tipo);
-    Token(ENUMS::tipoToken tipo, int valor);
-    Token(ENUMS::tipoToken tipo, double valor);
+    Token(ENUMS::tipoToken tipo, ENUMS::numeroTipo valor);
 
     //gets
-    ENUMS::tipoToken getTipo() const        {return this->tipo;}
-    int getValorInt() const                 {return this->valorInt;}
-    double getValorDouble() const           {return this->valorDouble;}
+    ENUMS::tipoToken getTipo() const            {return this->tipo;}
+    ENUMS::numeroTipo getValor() const                 {return this->valor;}
 
     //sets
-    void setTipo(ENUMS::tipoToken tipo)     {this->tipo = tipo;}
-    void setValorInt(int valor)             {this->valorInt = valor;}
-    void setValorDouble(double valor)       {this->valorDouble = valor;}
+    void setTipo(ENUMS::tipoToken tipo)         {this->tipo = tipo;}
+    void setValorInt(ENUMS::numeroTipo valor)          {this->valor = valor;}
 };
 
 

@@ -13,5 +13,11 @@ enum tipoToken{
     FECHAPARENTESE,
     ERRO
 };
+
+union numeroTipo{
+    int inteiro;
+    double real;
+};
+
 }//FIM DA NAMESPACE ENUMS
 #endif // ENUMS_H
