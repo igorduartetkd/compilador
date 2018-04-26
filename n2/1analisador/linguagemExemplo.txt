@@ -1,0 +1,73 @@
+Tokens: 
+
+nome [a-z][a-z0-9]*
+numero [0-9]+
+'<-' 
+'+'
+','
+';'
+'variavel'
+'programa'
+'escreva'
+'fim'
+
+
+
+
+Gramática:
+
+CODIGO ::= 'programa' nome
+		   DECLARACAO
+		   INSTRUCOES
+	    'fim'
+
+DECLARACAO ::= 'variavel' LISTA_VARIAVEIS;
+LISTA_VARIAVEIS ::= LISTA_VARIAVEIS ',' nome | nome
+
+INSTRUCOES ::= INSTRUCOES INSTRUCAO; | INSTRUCAO;
+INSTRUCAO ::= nome '<-' VALOR |  nome '<-' VALOR '+' VALOR |  'escreva' VALOR
+VALOR ::= nome | numero
+
+
+
+
+
+
+
+
+
+
+Esquema de Tradução para gerar Assembly-MIPS:
+
+CODIGO ::= 'programa' nome 								{ .data }	
+		   DECLARACAO								{ .text 
+											  .globl main
+											  main: }
+		   INSTRUCOES
+		   'fim'								{ li $v0, 10
+											  syscall
+											  .end main }
+DECLARACAO ::= 'variavel' LISTA_VARIAVEIS
+LISTA_VARIAVEIS ::= LISTA_VARIAVEIS ',' nome | 						{$1 : .word 0}
+					nome 		
+											{$1 : .word 0}
+INSTRUCOES ::= INSTRUCOES INSTRUCAO |				
+	       INSTRUCAO
+
+INSTRUCAO ::= nome '<-' VALOR |				{lw $t0, $2
+							 sw $t0, $1}
+			  
+		nome '<-' VALOR1 '+' VALOR2 |		{lw $t0, $3
+							 lw $t1, $5
+    							 add $t0, $t0, $t1
+							 sw $t0, $1}
+
+		'escreva' VALOR				{li $v0, 1
+							 lw $a0, $1
+							 syscall}
+
+VALOR ::= nome | 							{$$ = $1} //Opcional
+          numero							{$$ = $1}
+
+
+
