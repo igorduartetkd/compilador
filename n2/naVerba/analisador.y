@@ -45,7 +45,7 @@ programaIloc: listaInstrucoes
 ;
 
 listaInstrucoes: instrucao
-| label doisPontos instrucao
+| label doisPontos listaInstrucoes
 | instrucao listaInstrucoes
 ;
 
@@ -57,39 +57,57 @@ listaOperacoes: operacao
 | operacao pontoVirgula listaOperacoes
 ;
 
-operacao: opNormal
-| opFluxoControle
-;
-
-opNormal: opcode listaOperandos
-;
-
-listaOperandos: operando
-| operando separador listaOperandos
+operacao: nop
+| opcodeUnarioR reg
+| opcodeUnarioL label
+| opcodeBinarioRR reg separador reg
+| opcodeBinarioNR num separador reg
+| opcodeBinarioRL reg separador label
+| opcodeTernarioRRR reg separador reg separador reg
+| opcodeTernarioRNR reg separador num separador reg
+| opcodeTernarioRRN reg separador reg separador num
+| opcodeTernarioRLL reg separador label separador label
+| opcodeTernarioNLL num separador label separador label
 ;
 
 separador: 
 | virgula
 ;
 
-operando: reg
-| num
-| label
+
+opcodeUnarioR: jump
 ;
 
-opFluxoControle: cbr reg separador label separador label
-| jumpI label
-| jump	reg
+opcodeUnarioL: jumpI
 ;
 
+opcodeBinarioRR: load | cload | store | cstore 
+| i2i | c2c | c2i | i2c
+;
 
-opcode: add|sub|mult|div1|addI|subI|rsubI|multI|divI|rdivI
-|lshift|lshiftI|rshift|rshiftI|and|andI|or|orI|xor|xorI
-|loadI|load|loadAI|loadAO|cload|cloadAI|cloadAO|store|storeAI|storeAO|cstore|cstoreAI|cstoreAO
-|i2i|c2c|c2i|i2c
-|jump|jumpI|cbr|tbl
-|cmp_LT|cmp_LE|cmp_EQ|cmp_GE|cmp_GT|cmp_NE|comp
-|cbr_LT|cbr_LE|cbr_EQ|cbr_GE|cbr_GT|cbr_NE|nop
+opcodeBinarioNR: loadI
+;
+
+opcodeBinarioRL: tbl
+;
+
+opcodeTernarioRRR: add | sub | mult | div1 
+| lshift | rshift | and | or | xor 
+| loadAO | cloadAO | storeAO | cstoreAO 
+| cmp_LT | cmp_LE | cmp_EQ | cmp_GE | cmp_GT | cmp_NE
+;
+
+opcodeTernarioRNR: addI | subI | rsubI | multI | divI 
+| lshiftI | rshiftI | andI | orI | xorI | loadAI | cloadAI
+;
+
+opcodeTernarioRRN: storeAI | cstoreAI | comp
+;
+
+opcodeTernarioRLL: cbr
+;
+
+opcodeTernarioNLL: cbr_LT | cbr_LE | cbr_EQ | cbr_GE | cbr_GT | cbr_NE
 ;
 
 %%

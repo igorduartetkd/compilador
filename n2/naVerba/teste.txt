@@ -1,4 +1,2 @@
-add r0,r1,r2
-sub r1, r2, r3
-mult r1 r2 add
-
+label: add r0,r1,r2
+sub r1, r2, 2
