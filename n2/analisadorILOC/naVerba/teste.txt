@@ -1,2 +1,2 @@
 label: add r0,r1,r2
-sub r1, r2, 2
+subI r1, 1, r1
