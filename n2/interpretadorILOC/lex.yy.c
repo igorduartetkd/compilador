@@ -162,8 +162,27 @@ extern FILE *yyin, *yyout;
 #define EOB_ACT_END_OF_FILE 1
 #define EOB_ACT_LAST_MATCH 2
 
-    #define YY_LESS_LINENO(n)
-    #define YY_LINENO_REWIND_TO(ptr)
+    /* Note: We specifically omit the test for yy_rule_can_match_eol because it requires
+     *       access to the local variable yy_act. Since yyless() is a macro, it would break
+     *       existing scanners that call yyless() from OUTSIDE yylex.
+     *       One obvious solution it to make yy_act a global. I tried that, and saw
+     *       a 5% performance hit in a non-yylineno scanner, because yy_act is
+     *       normally declared as a register variable-- so it is not worth it.
+     */
+    #define  YY_LESS_LINENO(n) \
+            do { \
+                int yyl;\
+                for ( yyl = n; yyl < yyleng; ++yyl )\
+                    if ( yytext[yyl] == '\n' )\
+                        --yylineno;\
+            }while(0)
+    #define YY_LINENO_REWIND_TO(dst) \
+            do {\
+                const char *p;\
+                for ( p = yy_cp-1; p >= (dst); --p)\
+                    if ( *p == '\n' )\
+                        --yylineno;\
+            }while(0)
     
 /* Return all but the first "n" matched characters back to the input stream. */
 #define yyless(n) \
@@ -529,6 +548,14 @@ static yyconst flex_int16_t yy_chk[219] =
       153,  153,  153,  153,  153,  153,  153,  153
     } ;
 
+/* Table of booleans, true if rule could match eol. */
+static yyconst flex_int32_t yy_rule_can_match_eol[72] =
+    {   0,
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0,     };
+
 static yy_state_type yy_last_accepting_state;
 static char *yy_last_accepting_cpos;
 
@@ -547,8 +574,11 @@ char *yytext;
 #line 3 "interpretador.l"
 #include <stdlib.h>
 #include "interpretador.tab.h"
-
-#line 552 "lex.yy.c"
+short int executar = 1;
+int linhaPular;
+extern char *c;
+#define inicio if(!executar && yylineno == linhaPular)executar = 1;
+#line 582 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -766,10 +796,10 @@ YY_DECL
 		}
 
 	{
-#line 8 "interpretador.l"
+#line 12 "interpretador.l"
 
 
-#line 773 "lex.yy.c"
+#line 803 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -815,6 +845,16 @@ yy_find_action:
 
 		YY_DO_BEFORE_ACTION;
 
+		if ( yy_act != YY_END_OF_BUFFER && yy_rule_can_match_eol[yy_act] )
+			{
+			int yyl;
+			for ( yyl = 0; yyl < yyleng; ++yyl )
+				if ( yytext[yyl] == '\n' )
+					
+    yylineno++;
+;
+			}
+
 do_action:	/* This label is used only to access EOF actions. */
 
 		switch ( yy_act )
@@ -828,364 +868,368 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 10 "interpretador.l"
-{ return add;		}	
+#line 14 "interpretador.l"
+{inicio if(executar){ return add;}		}	
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 11 "interpretador.l"
-{ return sub;		}  
+#line 15 "interpretador.l"
+{inicio if(executar){ return sub;}		}  
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 12 "interpretador.l"
-{ return mult;		} 
+#line 16 "interpretador.l"
+{inicio if(executar){ return mult;}		} 
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 13 "interpretador.l"
-{ return div1;		}
+#line 17 "interpretador.l"
+{inicio if(executar){ return div1;}		}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 14 "interpretador.l"
-{ return addI;		}
+#line 18 "interpretador.l"
+{inicio if(executar){ return addI;}		}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 15 "interpretador.l"
-{ return subI;		}
+#line 19 "interpretador.l"
+{inicio if(executar){ return subI;}		}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 16 "interpretador.l"
-{ return rsubI;		}
+#line 20 "interpretador.l"
+{inicio if(executar){ return rsubI;	}	}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 17 "interpretador.l"
-{ return multI;		}
+#line 21 "interpretador.l"
+{inicio if(executar){ return multI;	}	}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 18 "interpretador.l"
-{ return divI;		}
+#line 22 "interpretador.l"
+{inicio if(executar){ return divI;}		}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 19 "interpretador.l"
-{ return rdivI;		}
+#line 23 "interpretador.l"
+{inicio if(executar){ return rdivI;}		}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 20 "interpretador.l"
-{ return lshift;	}
+#line 24 "interpretador.l"
+{inicio if(executar){ return lshift;}	}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 21 "interpretador.l"
-{ return lshiftI;	}
+#line 25 "interpretador.l"
+{inicio if(executar){ return lshiftI;}	}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 22 "interpretador.l"
-{ return rshift;	}
+#line 26 "interpretador.l"
+{inicio if(executar){ return rshift;}	}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 23 "interpretador.l"
-{ return rshiftI;	}
+#line 27 "interpretador.l"
+{inicio if(executar){ return rshiftI;}	}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 24 "interpretador.l"
-{ return and;		}
+#line 28 "interpretador.l"
+{inicio if(executar){ return and;}		}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 25 "interpretador.l"
-{ return andI;		}
+#line 29 "interpretador.l"
+{inicio if(executar){ return andI;}		}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 26 "interpretador.l"
-{ return or;		}
+#line 30 "interpretador.l"
+{inicio if(executar){ return or;}		}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 27 "interpretador.l"
-{ return orI;		}
+#line 31 "interpretador.l"
+{inicio if(executar){ return orI;}		}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 28 "interpretador.l"
-{ return xor;		}
+#line 32 "interpretador.l"
+{inicio if(executar){ return xor;}		}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 29 "interpretador.l"
-{ return xorI;		}
+#line 33 "interpretador.l"
+{inicio if(executar){ return xorI;}		}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 30 "interpretador.l"
-{ return loadI;		}
+#line 34 "interpretador.l"
+{inicio if(executar){ return loadI;}		}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 31 "interpretador.l"
-{ return load;		}
+#line 35 "interpretador.l"
+{inicio if(executar){ return load;}		}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 32 "interpretador.l"
-{ return loadAI;	}
+#line 36 "interpretador.l"
+{inicio if(executar) {return loadAI;}	}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 33 "interpretador.l"
-{ return loadAO;	}
+#line 37 "interpretador.l"
+{inicio if(executar) {return loadAO;}	}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 34 "interpretador.l"
-{ return cload;		}
+#line 38 "interpretador.l"
+{inicio if(executar) {return cload;	}	}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 35 "interpretador.l"
-{ return cloadAI;	}
+#line 39 "interpretador.l"
+{inicio if(executar) {return cloadAI;}	}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 36 "interpretador.l"
-{ return cloadAO;	}
+#line 40 "interpretador.l"
+{inicio if(executar) {return cloadAO;}	}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 37 "interpretador.l"
-{ return store;		}
+#line 41 "interpretador.l"
+{inicio if(executar) {return store;}		}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 38 "interpretador.l"
-{ return storeAI;	}
+#line 42 "interpretador.l"
+{inicio if(executar) {return storeAI;}	}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 39 "interpretador.l"
-{ return storeAO;	}
+#line 43 "interpretador.l"
+{inicio if(executar) {return storeAO;	}}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 40 "interpretador.l"
-{ return cstore;	}
+#line 44 "interpretador.l"
+{inicio if(executar) {return cstore;	}}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 41 "interpretador.l"
-{ return cstoreAI;	}
+#line 45 "interpretador.l"
+{inicio if(executar) {return cstoreAI;}	}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 42 "interpretador.l"
-{ return cstoreAO;	}
+#line 46 "interpretador.l"
+{inicio if(executar) {return cstoreAO;}	}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 43 "interpretador.l"
-{ return i2i;		}
+#line 47 "interpretador.l"
+{inicio if(executar) {return i2i;}		}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 44 "interpretador.l"
-{ return c2c;		}
+#line 48 "interpretador.l"
+{inicio if(executar) {return c2c;}		}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 45 "interpretador.l"
-{ return c2i;		}
+#line 49 "interpretador.l"
+{inicio if(executar) {return c2i;}		}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 46 "interpretador.l"
-{ return i2c;		}
+#line 50 "interpretador.l"
+{inicio if(executar) {return i2c;}		}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 47 "interpretador.l"
-{ return jump;		}
+#line 51 "interpretador.l"
+{inicio if(executar) {return jump;}		}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 48 "interpretador.l"
-{ return jumpI;		}
+#line 52 "interpretador.l"
+{inicio if(executar) {return jumpI;}		}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 49 "interpretador.l"
-{ return cbr;		}
+#line 53 "interpretador.l"
+{inicio if(executar) {return cbr;	}	}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 50 "interpretador.l"
-{ return tbl;		}
+#line 54 "interpretador.l"
+{inicio if(executar) {return tbl;	}	}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 51 "interpretador.l"
-{ return cmp_LT;	}
+#line 55 "interpretador.l"
+{inicio if(executar) {return cmp_LT;}	}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 52 "interpretador.l"
-{ return cmp_LE;	}
+#line 56 "interpretador.l"
+{inicio if(executar) {return cmp_LE;}	}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 53 "interpretador.l"
-{ return cmp_EQ;	}
+#line 57 "interpretador.l"
+{inicio if(executar) {return cmp_EQ;}	}
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 54 "interpretador.l"
-{ return cmp_GE;	}
+#line 58 "interpretador.l"
+{inicio if(executar) {return cmp_GE;}	}
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 55 "interpretador.l"
-{ return cmp_GT;	}
+#line 59 "interpretador.l"
+{inicio if(executar) {return cmp_GT;}	}
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 56 "interpretador.l"
-{ return cmp_NE;	}
+#line 60 "interpretador.l"
+{inicio if(executar) {return cmp_NE;}	}
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 57 "interpretador.l"
-{ return comp;		}
+#line 61 "interpretador.l"
+{inicio if(executar) {return comp;}		}
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 58 "interpretador.l"
-{ return cbr_LT;	}
+#line 62 "interpretador.l"
+{inicio if(executar) {return cbr_LT;}	}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 59 "interpretador.l"
-{ return cbr_LE;	}
+#line 63 "interpretador.l"
+{inicio if(executar) {return cbr_LE;}	}
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 60 "interpretador.l"
-{ return cbr_EQ;	}
+#line 64 "interpretador.l"
+{inicio if(executar) {return cbr_EQ;}	}
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 61 "interpretador.l"
-{ return cbr_GE;	}
+#line 65 "interpretador.l"
+{inicio if(executar) {return cbr_GE;}	}
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 62 "interpretador.l"
-{ return cbr_GT;	}
+#line 66 "interpretador.l"
+{inicio if(executar) {return cbr_GT;}	}
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 63 "interpretador.l"
-{ return cbr_NE;	}
+#line 67 "interpretador.l"
+{inicio if(executar) {return cbr_NE;}	}
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 64 "interpretador.l"
-{ return nop;		}
+#line 68 "interpretador.l"
+{inicio if(executar) {return nop;}		}
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 65 "interpretador.l"
-{ return inputi;	}
+#line 69 "interpretador.l"
+{inicio if(executar) {return inputi;}	}
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 66 "interpretador.l"
-{ return outputi;	}
+#line 70 "interpretador.l"
+{inicio if(executar) {return outputi;}	}
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 67 "interpretador.l"
-{ return inputc;	}
+#line 71 "interpretador.l"
+{inicio if(executar) {return inputc;}	}
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 68 "interpretador.l"
-{ return outputc;	}
+#line 72 "interpretador.l"
+{inicio if(executar) {return outputc;}	}
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 69 "interpretador.l"
-{ char num [1]; 
-			num[0] = yytext[1];
-			yylval = atoi(num); 
-			return reg;	}
+#line 73 "interpretador.l"
+{inicio if(executar){ char num [1]; 
+				num[0] = yytext[1];
+				yylval = atoi(num); 
+				return reg;}	}
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 73 "interpretador.l"
-{ return virgula;	}
+#line 77 "interpretador.l"
+{inicio if(executar) {return virgula;}	}
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 74 "interpretador.l"
-{ return pontoVirgula;	}
+#line 78 "interpretador.l"
+{inicio if(executar) {return pontoVirgula;}	}
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 75 "interpretador.l"
-{ return doisPontos;	}
+#line 79 "interpretador.l"
+{inicio if(executar) {return doisPontos;}	}
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 76 "interpretador.l"
-{ yylval = yytext[0]; return caractere;}
+#line 80 "interpretador.l"
+{inicio if(executar){ yylval = yytext[0]; return caractere;}}
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 77 "interpretador.l"
-{ return label;		}
+#line 81 "interpretador.l"
+{inicio if(executar){
+					c = malloc(sizeof(yytext)); 
+					strcpy(c, yytext); 
+					return label;
+				}}
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 78 "interpretador.l"
-{ yylval = atoi(yytext);	return num;		}
+#line 86 "interpretador.l"
+{inicio if(executar){ yylval = atoi(yytext);	return num;		}}
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 79 "interpretador.l"
-{ return abreColchete;	}
+#line 87 "interpretador.l"
+{inicio if(executar) {return abreColchete;}	}
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 80 "interpretador.l"
-{ return fechaColchete;	}
+#line 88 "interpretador.l"
+{inicio if(executar) {return fechaColchete;}	}
 	YY_BREAK
 case 69:
 /* rule 69 can match eol */
 YY_RULE_SETUP
-#line 81 "interpretador.l"
+#line 89 "interpretador.l"
 {/*ignora tab e espaco*/}
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 82 "interpretador.l"
-{ return erro;		}
+#line 90 "interpretador.l"
+{inicio if(executar) {return erro;}		}
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 84 "interpretador.l"
+#line 92 "interpretador.l"
 ECHO;
 	YY_BREAK
-#line 1189 "lex.yy.c"
+#line 1233 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1549,6 +1593,10 @@ static int yy_get_next_buffer (void)
 
 	*--yy_cp = (char) c;
 
+    if ( c == '\n' ){
+        --yylineno;
+    }
+
 	(yytext_ptr) = yy_bp;
 	(yy_hold_char) = *yy_cp;
 	(yy_c_buf_p) = yy_cp;
@@ -1625,6 +1673,11 @@ static int yy_get_next_buffer (void)
 	c = *(unsigned char *) (yy_c_buf_p);	/* cast for 8-bit char's */
 	*(yy_c_buf_p) = '\0';	/* preserve yytext */
 	(yy_hold_char) = *++(yy_c_buf_p);
+
+	if ( c == '\n' )
+		
+    yylineno++;
+;
 
 	return c;
 }
@@ -2092,6 +2145,9 @@ static int yy_init_globals (void)
      * This function is called from yylex_destroy(), so don't allocate here.
      */
 
+    /* We do not touch yylineno unless the option is enabled. */
+    yylineno =  1;
+    
     (yy_buffer_stack) = NULL;
     (yy_buffer_stack_top) = 0;
     (yy_buffer_stack_max) = 0;
@@ -2186,7 +2242,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 84 "interpretador.l"
+#line 92 "interpretador.l"
 
 
 

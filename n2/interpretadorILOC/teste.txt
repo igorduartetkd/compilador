@@ -1,23 +1,13 @@
-label: loadI 3, r1
-loadI 6, r4
-input r4 255
-output r4
-inputC r1 a
-outputC r1
-input r2 9
-input r1 10
-outputC r1
-i2c r2 r4
-outputC r4
-add r1, r4, r2
-sub r1, r4, r2
-mult r1, r4, r2
-div r1, r4, r2
-addI r1, 10, r2
-subI r1, 10, r2
-rsubI r1, 10, r2
-multI r1, 10, r2
-divI r1, 10, r2
-rdivI r1, 10, r2
-
-
+loadI 5, r1
+input r2 4
+coco1: input r9 10
+jump r9
+add r1, r2, r3
+output r3
+outputC r9
+coco2: sub r1, r2, r3
+output r3
+outputC r9
+coco3: mult r1, r2, r3
+output r3
+outputC r9
