@@ -1,25 +1,27 @@
 %{
 #include <stdio.h>
 #include <string.h>
-char* resposta = 0;
-int regs[10];
-int memInt[500];
-char memChar[500];
-int linha[500];
-char labelN[500][16]; //limitando o tamanho da label a 16 caracteres
-void iniciaLinha();
-int buscaLabelLinha(char c[]);
-unsigned int pc;
-extern int yylineno;
-extern int yylex();
-extern void yyrestart(FILE *f);
-extern short int executar;
-extern int linhaPular;
-short int modoIdLabel;
-char *c = 0;
-int yyerror(char *s);
-FILE *yyin;
-int qtdLinha = 0;
+char* resposta = 0;		//utilizado em caso de erro
+int regs[10];			//registradores (limitado a 10)
+int memInt[500];		//memoria de inteiros
+char memChar[500];		//memoria de caracteres
+int linha[500];			//armazena a linha de cada label
+char labelN[500][16]; 		//limitando o tamanho da label a 16 caracteres
+void iniciaLinha();		//inicia o vetor linha com 0, obsoleto, substituido pela variavel qtdLinha
+int buscarLabelLinha(char c[]);	//retorna a linha que está a label c[]
+unsigned int pc;		//nao utilizado ainda
+extern int yylineno;		//armazena a linha atual do flex
+extern int yylex();		
+extern void yyrestart(FILE *f);	//utilizado para reiniciar a leitura do arquivo
+extern short int executar;	//flag de execução: 0- nao executar | 1- executar
+extern int linhaPular;		//armazena a linha que o jump deve ir
+short int modoIdLabel;		//utilizado para mapear as linhas das labels no inicio do codigo
+char *nomeLabel = 0;		//retorno da label pelo flex
+int yyerror(char *s);		//funçao que entra em caso de erro
+FILE *yyin;			//arquivo de entrada
+int qtdLinha = 0;		//utilizado para armazenar as linhas nas posicoes corretas do vetor linha e labelN
+void pular(int linha);
+int aux;			//se precisar é so chamar
 %}
 
 /* --- TOKENS OPERADORES DE OPERADORES ---*/
@@ -64,11 +66,11 @@ programaIloc: listaInstrucoes
 ;
 
 listaInstrucoes: instrucao
-| label {if(modoIdLabel){/*armazenar a linha e a label*/ 
-						if(c){ linha[qtdLinha] = yylineno;
-							strcpy(labelN[qtdLinha], c);
+| label {if(modoIdLabel){/*armazenar a linha de cada label*/ 
+						if(nomeLabel){ linha[qtdLinha] = yylineno;
+							strcpy(labelN[qtdLinha], nomeLabel);
 							qtdLinha++;
-							free(c); c = 0;}} }  doisPontos listaInstrucoes 	
+							free(nomeLabel); nomeLabel = 0;}} }  doisPontos listaInstrucoes 	
 | instrucao listaInstrucoes
 ;
 
@@ -125,21 +127,19 @@ operacao: nop
 | c2i 		reg separador reg			{if(!modoIdLabel){regs[$4] = regs[$2] - 48;}}
 | i2c		reg separador reg			{if(!modoIdLabel){regs[$4] = regs[$2] + 48;}}
 
-| jump		reg					{if(!modoIdLabel){	fclose(yyin); 
-								yyin = fopen("teste.txt", "r"); 
-								yylineno = 1;
-								executar = 0;
-								linhaPular = regs[$2];
-								yyrestart(yyin);}}
-| jumpI		label					{if(!modoIdLabel){	fclose(yyin); 
-								yyin = fopen("teste.txt", "r"); 
-								yylineno = 1;
-								executar = 0;
-								linhaPular = buscaLabelLinha(c);
-								free(c); c = 0;
-								yyrestart(yyin);}}
+| jump		reg					{if(!modoIdLabel){pular(regs[$2]);}} //it's too easy
+| jumpI		label					{if(!modoIdLabel){pular(buscarLabelLinha(nomeLabel));
+								free(nomeLabel); nomeLabel = 0;}}
 
-| cbr		reg separador label separador label	
+| cbr		reg separador label {if(!modoIdLabel){aux = buscarLabelLinha(nomeLabel); free(nomeLabel); nomeLabel = 0;}} 
+				    separador label	{if(!modoIdLabel){ if(regs[$2]){
+										pular(aux);
+									}else{		
+										pular(buscarLabelLinha(nomeLabel));
+										free(nomeLabel); nomeLabel = 0;
+									}
+									}
+							}
 | tbl		reg separador label			
 | cmp_LT 	reg separador reg separador reg		{if(!modoIdLabel){regs[$6] = regs[$2] <  regs[$4];}}
 | cmp_LE 	reg separador reg separador reg		{if(!modoIdLabel){regs[$6] = regs[$2] <= regs[$4];}}
@@ -203,10 +203,20 @@ void iniciaLinha(){
 	}
 }
 
-int buscaLabelLinha(char c[]){
+//funçao para mapear em qual linha está cada label
+int buscarLabelLinha(char c[]){
 	for(int i=0; i< qtdLinha; i++){
 		if(strcmp(labelN[i], c) == 0){
 			return linha[i];
 		}
 	}
+}
+
+void pular(int linha){
+	fclose(yyin);  //no reg deve conter a linha para saltar
+	yyin = fopen("teste.txt", "r"); 
+	yylineno = 1;
+	executar = 0;
+	linhaPular = linha;
+	yyrestart(yyin);
 }

@@ -4,7 +4,7 @@
 #include "interpretador.tab.h"
 short int executar = 1;
 int linhaPular;
-extern char *c;
+extern char *nomeLabel;
 #define inicio if(!executar && yylineno == linhaPular)executar = 1;
 %}
 
@@ -79,8 +79,8 @@ extern char *c;
 ":"		{inicio if(executar) {return doisPontos;}	}
 [a-zA-Z]	{inicio if(executar){ yylval = yytext[0]; return caractere;}}
 [a-zA-Z]([a-zA-Z]|[0-9]|-)*	{inicio if(executar){
-					c = malloc(sizeof(yytext)); 
-					strcpy(c, yytext); 
+					nomeLabel = malloc(sizeof(char)*16);  //tambem limita tamanho da label a 16 caracteres
+					strcpy(nomeLabel, yytext); 
 					return label;
 				}}
 [0-9]+		{inicio if(executar){ yylval = atoi(yytext);	return num;		}}

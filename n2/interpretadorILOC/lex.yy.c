@@ -576,7 +576,7 @@ char *yytext;
 #include "interpretador.tab.h"
 short int executar = 1;
 int linhaPular;
-extern char *c;
+extern char *nomeLabel;
 #define inicio if(!executar && yylineno == linhaPular)executar = 1;
 #line 582 "lex.yy.c"
 
@@ -1193,8 +1193,8 @@ case 65:
 YY_RULE_SETUP
 #line 81 "interpretador.l"
 {inicio if(executar){
-					c = malloc(sizeof(yytext)); 
-					strcpy(c, yytext); 
+					nomeLabel = malloc(sizeof(char)*16);  //tambem limita tamanho da label a 16 caracteres
+					strcpy(nomeLabel, yytext); 
 					return label;
 				}}
 	YY_BREAK
