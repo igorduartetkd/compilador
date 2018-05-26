@@ -573,12 +573,13 @@ char *yytext;
 #line 1 "interpretador.l"
 #line 3 "interpretador.l"
 #include <stdlib.h>
+#include <math.h>
 #include "interpretador.tab.h"
 short int executar = 1;
 int linhaPular;
 extern char *nomeLabel;
 #define inicio if(!executar && yylineno == linhaPular)executar = 1;
-#line 582 "lex.yy.c"
+#line 583 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -796,10 +797,10 @@ YY_DECL
 		}
 
 	{
-#line 12 "interpretador.l"
+#line 13 "interpretador.l"
 
 
-#line 803 "lex.yy.c"
+#line 804 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -868,302 +869,302 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 14 "interpretador.l"
+#line 15 "interpretador.l"
 {inicio if(executar){ return add;}		}	
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 15 "interpretador.l"
+#line 16 "interpretador.l"
 {inicio if(executar){ return sub;}		}  
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 16 "interpretador.l"
+#line 17 "interpretador.l"
 {inicio if(executar){ return mult;}		} 
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 17 "interpretador.l"
+#line 18 "interpretador.l"
 {inicio if(executar){ return div1;}		}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 18 "interpretador.l"
+#line 19 "interpretador.l"
 {inicio if(executar){ return addI;}		}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 19 "interpretador.l"
+#line 20 "interpretador.l"
 {inicio if(executar){ return subI;}		}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 20 "interpretador.l"
+#line 21 "interpretador.l"
 {inicio if(executar){ return rsubI;	}	}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 21 "interpretador.l"
+#line 22 "interpretador.l"
 {inicio if(executar){ return multI;	}	}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 22 "interpretador.l"
+#line 23 "interpretador.l"
 {inicio if(executar){ return divI;}		}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 23 "interpretador.l"
+#line 24 "interpretador.l"
 {inicio if(executar){ return rdivI;}		}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 24 "interpretador.l"
+#line 25 "interpretador.l"
 {inicio if(executar){ return lshift;}	}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 25 "interpretador.l"
+#line 26 "interpretador.l"
 {inicio if(executar){ return lshiftI;}	}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 26 "interpretador.l"
+#line 27 "interpretador.l"
 {inicio if(executar){ return rshift;}	}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 27 "interpretador.l"
+#line 28 "interpretador.l"
 {inicio if(executar){ return rshiftI;}	}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 28 "interpretador.l"
+#line 29 "interpretador.l"
 {inicio if(executar){ return and;}		}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 29 "interpretador.l"
+#line 30 "interpretador.l"
 {inicio if(executar){ return andI;}		}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 30 "interpretador.l"
+#line 31 "interpretador.l"
 {inicio if(executar){ return or;}		}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 31 "interpretador.l"
+#line 32 "interpretador.l"
 {inicio if(executar){ return orI;}		}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 32 "interpretador.l"
+#line 33 "interpretador.l"
 {inicio if(executar){ return xor;}		}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 33 "interpretador.l"
+#line 34 "interpretador.l"
 {inicio if(executar){ return xorI;}		}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 34 "interpretador.l"
+#line 35 "interpretador.l"
 {inicio if(executar){ return loadI;}		}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 35 "interpretador.l"
+#line 36 "interpretador.l"
 {inicio if(executar){ return load;}		}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 36 "interpretador.l"
+#line 37 "interpretador.l"
 {inicio if(executar) {return loadAI;}	}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 37 "interpretador.l"
+#line 38 "interpretador.l"
 {inicio if(executar) {return loadAO;}	}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 38 "interpretador.l"
+#line 39 "interpretador.l"
 {inicio if(executar) {return cload;	}	}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 39 "interpretador.l"
+#line 40 "interpretador.l"
 {inicio if(executar) {return cloadAI;}	}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 40 "interpretador.l"
+#line 41 "interpretador.l"
 {inicio if(executar) {return cloadAO;}	}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 41 "interpretador.l"
+#line 42 "interpretador.l"
 {inicio if(executar) {return store;}		}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 42 "interpretador.l"
+#line 43 "interpretador.l"
 {inicio if(executar) {return storeAI;}	}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 43 "interpretador.l"
+#line 44 "interpretador.l"
 {inicio if(executar) {return storeAO;	}}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 44 "interpretador.l"
+#line 45 "interpretador.l"
 {inicio if(executar) {return cstore;	}}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 45 "interpretador.l"
+#line 46 "interpretador.l"
 {inicio if(executar) {return cstoreAI;}	}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 46 "interpretador.l"
+#line 47 "interpretador.l"
 {inicio if(executar) {return cstoreAO;}	}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 47 "interpretador.l"
+#line 48 "interpretador.l"
 {inicio if(executar) {return i2i;}		}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 48 "interpretador.l"
+#line 49 "interpretador.l"
 {inicio if(executar) {return c2c;}		}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 49 "interpretador.l"
+#line 50 "interpretador.l"
 {inicio if(executar) {return c2i;}		}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 50 "interpretador.l"
+#line 51 "interpretador.l"
 {inicio if(executar) {return i2c;}		}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 51 "interpretador.l"
+#line 52 "interpretador.l"
 {inicio if(executar) {return jump;}		}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 52 "interpretador.l"
+#line 53 "interpretador.l"
 {inicio if(executar) {return jumpI;}		}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 53 "interpretador.l"
+#line 54 "interpretador.l"
 {inicio if(executar) {return cbr;	}	}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 54 "interpretador.l"
+#line 55 "interpretador.l"
 {inicio if(executar) {return tbl;	}	}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 55 "interpretador.l"
+#line 56 "interpretador.l"
 {inicio if(executar) {return cmp_LT;}	}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 56 "interpretador.l"
+#line 57 "interpretador.l"
 {inicio if(executar) {return cmp_LE;}	}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 57 "interpretador.l"
+#line 58 "interpretador.l"
 {inicio if(executar) {return cmp_EQ;}	}
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 58 "interpretador.l"
+#line 59 "interpretador.l"
 {inicio if(executar) {return cmp_GE;}	}
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 59 "interpretador.l"
+#line 60 "interpretador.l"
 {inicio if(executar) {return cmp_GT;}	}
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 60 "interpretador.l"
+#line 61 "interpretador.l"
 {inicio if(executar) {return cmp_NE;}	}
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 61 "interpretador.l"
+#line 62 "interpretador.l"
 {inicio if(executar) {return comp;}		}
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 62 "interpretador.l"
+#line 63 "interpretador.l"
 {inicio if(executar) {return cbr_LT;}	}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 63 "interpretador.l"
+#line 64 "interpretador.l"
 {inicio if(executar) {return cbr_LE;}	}
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 64 "interpretador.l"
+#line 65 "interpretador.l"
 {inicio if(executar) {return cbr_EQ;}	}
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 65 "interpretador.l"
+#line 66 "interpretador.l"
 {inicio if(executar) {return cbr_GE;}	}
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 66 "interpretador.l"
+#line 67 "interpretador.l"
 {inicio if(executar) {return cbr_GT;}	}
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 67 "interpretador.l"
+#line 68 "interpretador.l"
 {inicio if(executar) {return cbr_NE;}	}
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 68 "interpretador.l"
+#line 69 "interpretador.l"
 {inicio if(executar) {return nop;}		}
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 69 "interpretador.l"
+#line 70 "interpretador.l"
 {inicio if(executar) {return inputi;}	}
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 70 "interpretador.l"
+#line 71 "interpretador.l"
 {inicio if(executar) {return outputi;}	}
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 71 "interpretador.l"
+#line 72 "interpretador.l"
 {inicio if(executar) {return inputc;}	}
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 72 "interpretador.l"
+#line 73 "interpretador.l"
 {inicio if(executar) {return outputc;}	}
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 73 "interpretador.l"
+#line 74 "interpretador.l"
 {inicio if(executar){ char num [1]; 
 				num[0] = yytext[1];
 				yylval = atoi(num); 
@@ -1171,27 +1172,27 @@ YY_RULE_SETUP
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 77 "interpretador.l"
+#line 78 "interpretador.l"
 {inicio if(executar) {return virgula;}	}
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 78 "interpretador.l"
+#line 79 "interpretador.l"
 {inicio if(executar) {return pontoVirgula;}	}
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 79 "interpretador.l"
+#line 80 "interpretador.l"
 {inicio if(executar) {return doisPontos;}	}
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 80 "interpretador.l"
+#line 81 "interpretador.l"
 {inicio if(executar){ yylval = yytext[0]; return caractere;}}
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 81 "interpretador.l"
+#line 82 "interpretador.l"
 {inicio if(executar){
 					nomeLabel = malloc(sizeof(char)*16);  //tambem limita tamanho da label a 16 caracteres
 					strcpy(nomeLabel, yytext); 
@@ -1200,36 +1201,36 @@ YY_RULE_SETUP
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 86 "interpretador.l"
+#line 87 "interpretador.l"
 {inicio if(executar){ yylval = atoi(yytext);	return num;		}}
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 87 "interpretador.l"
+#line 88 "interpretador.l"
 {inicio if(executar) {return abreColchete;}	}
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 88 "interpretador.l"
+#line 89 "interpretador.l"
 {inicio if(executar) {return fechaColchete;}	}
 	YY_BREAK
 case 69:
 /* rule 69 can match eol */
 YY_RULE_SETUP
-#line 89 "interpretador.l"
+#line 90 "interpretador.l"
 {/*ignora tab e espaco*/}
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 90 "interpretador.l"
+#line 91 "interpretador.l"
 {inicio if(executar) {return erro;}		}
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 92 "interpretador.l"
+#line 93 "interpretador.l"
 ECHO;
 	YY_BREAK
-#line 1233 "lex.yy.c"
+#line 1234 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2242,7 +2243,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 92 "interpretador.l"
+#line 93 "interpretador.l"
 
 
 

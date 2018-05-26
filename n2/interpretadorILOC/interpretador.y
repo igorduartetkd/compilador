@@ -1,6 +1,8 @@
 %{
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <math.h>
 char* resposta = 0;		//utilizado em caso de erro
 int regs[10];			//registradores (limitado a 10)
 int memInt[500];		//memoria de inteiros
@@ -22,6 +24,7 @@ FILE *yyin;			//arquivo de entrada
 int qtdLinha = 0;		//utilizado para armazenar as linhas nas posicoes corretas do vetor linha e labelN
 void pular(int linha);
 int aux;			//se precisar é so chamar
+short int testarBit(int reg, short int nbit);  //se o registrador em binario for 1 no bit nbit retorna 1 caso contrario retorna 0
 %}
 
 /* --- TOKENS OPERADORES DE OPERADORES ---*/
@@ -137,24 +140,78 @@ operacao: nop
 									}else{		
 										pular(buscarLabelLinha(nomeLabel));
 										free(nomeLabel); nomeLabel = 0;
-									}
+									     }
 									}
 							}
-| tbl		reg separador label			
+| tbl		reg separador label//nao é necessário no meu codigo pois isto é para loosers
 | cmp_LT 	reg separador reg separador reg		{if(!modoIdLabel){regs[$6] = regs[$2] <  regs[$4];}}
 | cmp_LE 	reg separador reg separador reg		{if(!modoIdLabel){regs[$6] = regs[$2] <= regs[$4];}}
 | cmp_EQ 	reg separador reg separador reg		{if(!modoIdLabel){regs[$6] = regs[$2] == regs[$4];}}
 | cmp_GE 	reg separador reg separador reg		{if(!modoIdLabel){regs[$6] = regs[$2] >= regs[$4];}}
 | cmp_GT 	reg separador reg separador reg		{if(!modoIdLabel){regs[$6] = regs[$2] >  regs[$4];}}
-| cmp_NE 	reg separador reg separador reg		{if(!modoIdLabel){regs[$6] = regs[$2] != regs[$4];}}
-| comp		
-
-| cbr_LT 
-| cbr_LE 
-| cbr_EQ 
-| cbr_GE 
-| cbr_GT 
-| cbr_NE
+| cmp_NE 	reg separador reg separador reg		{if(!modoIdLabel){regs[$6] = regs[$2] != regs[$4];}} //proximo passo: composicao do $6
+| comp		reg separador reg separador reg		{if(!modoIdLabel){regs[$6] = 0;
+									  if(regs[$2] <  regs[$4]) regs[$6] += 1; //caso cmp = LT
+									  if(regs[$2] <= regs[$4]) regs[$6] += 2; //caso cmp = LE
+									  if(regs[$2] == regs[$4]) regs[$6] += 4; //caso cmp = EQ
+									  if(regs[$2] >= regs[$4]) regs[$6] += 8; //caso cmp = GE
+									  if(regs[$2] >  regs[$4]) regs[$6] += 16; //caso cmp = GT
+									  if(regs[$2] != regs[$4]) regs[$6] += 32; //caso cmp = NE
+									}}
+| cbr_LT 	reg separador label {if(!modoIdLabel){aux = buscarLabelLinha(nomeLabel); free(nomeLabel); nomeLabel = 0;}} 
+				    separador label  {if(!modoIdLabel){ if(testarBit($2, 0)){
+										pular(aux);
+									}else{		
+										pular(buscarLabelLinha(nomeLabel));
+										free(nomeLabel); nomeLabel = 0;
+									     }
+									}
+							}
+| cbr_LE 	reg separador label {if(!modoIdLabel){aux = buscarLabelLinha(nomeLabel); free(nomeLabel); nomeLabel = 0;}} 
+				    separador label {if(!modoIdLabel){ if(testarBit($2, 1)){
+										pular(aux);
+									}else{		
+										pular(buscarLabelLinha(nomeLabel));
+										free(nomeLabel); nomeLabel = 0;
+									     }
+									}
+							}	
+| cbr_EQ 	reg separador label {if(!modoIdLabel){aux = buscarLabelLinha(nomeLabel); free(nomeLabel); nomeLabel = 0;}} 
+				    separador label {if(!modoIdLabel){ if(testarBit($2, 2)){
+										pular(aux);
+									}else{		
+										pular(buscarLabelLinha(nomeLabel));
+										free(nomeLabel); nomeLabel = 0;
+									     }
+									}
+							}
+| cbr_GE 	reg separador label {if(!modoIdLabel){aux = buscarLabelLinha(nomeLabel); free(nomeLabel); nomeLabel = 0;}} 
+				    separador label {if(!modoIdLabel){ if(testarBit($2, 3)){
+										pular(aux);
+									}else{		
+										pular(buscarLabelLinha(nomeLabel));
+										free(nomeLabel); nomeLabel = 0;
+									     }
+									}
+							}
+| cbr_GT 	reg separador label {if(!modoIdLabel){aux = buscarLabelLinha(nomeLabel); free(nomeLabel); nomeLabel = 0;}} 
+				    separador label {if(!modoIdLabel){ if(testarBit($2, 4)){
+										pular(aux);
+									}else{		
+										pular(buscarLabelLinha(nomeLabel));
+										free(nomeLabel); nomeLabel = 0;
+									     }
+									}
+							}
+| cbr_NE	reg separador label {if(!modoIdLabel){aux = buscarLabelLinha(nomeLabel); free(nomeLabel); nomeLabel = 0;}} 
+				    separador label {if(!modoIdLabel){ if(testarBit($2, 5)){
+										pular(aux);
+									}else{		
+										pular(buscarLabelLinha(nomeLabel));
+										free(nomeLabel); nomeLabel = 0;
+									     }
+									}
+							}
 
 | inputi 	reg num					{if(!modoIdLabel){regs[$2] = $3;}}
 | outputi 	reg					{if(!modoIdLabel){int aux = $2; printf("%d", regs[aux]);}}
@@ -212,11 +269,31 @@ int buscarLabelLinha(char c[]){
 	}
 }
 
+/*
+* ele le do inicio, poderia melhorar fazendo executar a partir 
+* no numero da linha mas estou sem tempo para pesquisar como 
+* continuar a partir de uma linha específica
+*/
 void pular(int linha){
 	fclose(yyin);  //no reg deve conter a linha para saltar
 	yyin = fopen("teste.txt", "r"); 
 	yylineno = 1;
 	executar = 0;
 	linhaPular = linha;
-	yyrestart(yyin);
+	yyrestart(yyin);	
+}
+
+short int testarBit(int reg, short int nbit){
+	int saida = 0;
+	int aux2;
+	for(int i = 0; i<6; i++){
+		aux2 = 5-i;
+		if(regs[reg] / pow (2, aux2)){
+			regs[reg] -= pow (2, aux2);
+			if(nbit == aux2){
+				saida = 1;
+			}
+		}
+	}
+	return saida;
 }

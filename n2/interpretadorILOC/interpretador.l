@@ -1,6 +1,7 @@
 %option yylineno 
 %{
 #include <stdlib.h>
+#include <math.h>
 #include "interpretador.tab.h"
 short int executar = 1;
 int linhaPular;

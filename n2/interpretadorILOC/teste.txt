@@ -1,7 +1,8 @@
 loadI 5, r1
 input r2 4
 coco1: input r9 10
-cbr r9, coco3, coco2
+comp r2, r1, r5
+cbr_NE r5, coco2, coco3
 add r1, r2, r3
 output r3
 outputC r9
