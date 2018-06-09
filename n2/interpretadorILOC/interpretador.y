@@ -275,7 +275,7 @@ int buscarLabelLinha(char c[]){
 * continuar a partir de uma linha específica
 */
 void pular(int linha){
-	fclose(yyin);  //no reg deve conter a linha para saltar
+	fclose(yyin); 
 	yyin = fopen("teste.txt", "r"); 
 	yylineno = 1;
 	executar = 0;
