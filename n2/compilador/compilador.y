@@ -17,6 +17,11 @@ unsigned int sp = 0;		//stack pointer indica a posicao da pilha;
 unsigned int qtdVariavel = 0; 	//armazena a quantidade de variaveis que tem no programa
 int buscarIdVariavel(char c[]);	//retorna o indice correspondente a variavel c
 unsigned int auxAtribuicao;
+unsigned int auxCondicional;
+unsigned int contadorIf = 0;
+unsigned int contadorWhile = 0;
+unsigned int stackIf[500]; 	//pilha para armazenar os contadores de if
+unsigned int spStackIf = 0;	//stack point para o stackIf
 %}
 
 
@@ -49,16 +54,18 @@ unsigned int auxAtribuicao;
 programa: sequenciaComandos end
 ;
 
-sequenciaComandos: comando
+sequenciaComandos: comando 
 | sequenciaComandos pontoVirgula comando
 ;
 
 comando: 
 | declaracao
 | atribuicao
+| expressao
 | leitura
 | impressao
 | decisao
+| repeticao
 ;
 
 declaracao: inteiro label 		{
@@ -86,12 +93,36 @@ expressao: expressao add termo		{
 						fprintf(yyout, "loadI %d, r2\n", ++sp);
 						fprintf(yyout, "store r1, r2\n");
 						}
-| expressao sub termo
+| expressao sub termo			{	
+						fprintf(yyout, "loadI %d, r1\n", sp--);
+						fprintf(yyout, "load r1, r2\n");
+						fprintf(yyout, "loadI %d, r1\n", sp--);
+						fprintf(yyout, "load r1, r3\n");
+						fprintf(yyout, "sub r3, r2, r1\n");
+						fprintf(yyout, "loadI %d, r2\n", ++sp);
+						fprintf(yyout, "store r1, r2\n");
+						}
 | termo
 ;
 
-termo: termo mult fator
-| termo div1 fator
+termo: termo mult fator			{	
+						fprintf(yyout, "loadI %d, r1\n", sp--);
+						fprintf(yyout, "load r1, r2\n");
+						fprintf(yyout, "loadI %d, r1\n", sp--);
+						fprintf(yyout, "load r1, r3\n");
+						fprintf(yyout, "mult r2, r3, r1\n");
+						fprintf(yyout, "loadI %d, r2\n", ++sp);
+						fprintf(yyout, "store r1, r2\n");
+						}
+| termo div1 fator			{	
+						fprintf(yyout, "loadI %d, r1\n", sp--);
+						fprintf(yyout, "load r1, r2\n");
+						fprintf(yyout, "loadI %d, r1\n", sp--);
+						fprintf(yyout, "load r1, r3\n");
+						fprintf(yyout, "div r2, r3, r1\n");
+						fprintf(yyout, "loadI %d, r2\n", ++sp);
+						fprintf(yyout, "store r1, r2\n");
+						}
 | fator
 ;
 
@@ -119,11 +150,11 @@ listaIdentificadores:
 ;
 
 impressao:
-output1 listaExpressoes	{
-					fprintf(yyout, "loadI %d, r1\n", sp--);
-					fprintf(yyout, "load r1, r2\n");
-					fprintf(yyout, "output r2\n");
-					}
+output1 listaExpressoes			{
+						fprintf(yyout, "loadI %d, r1\n", sp--);
+						fprintf(yyout, "load r1, r2\n");
+						fprintf(yyout, "output r2\n");
+						}
 ;
 
 listaExpressoes: 
@@ -131,18 +162,63 @@ listaExpressoes:
 | expressao virgula listaExpressoes
 ;
 
-decisao: se comparacao abreChave comando fechaChave senao abreChave comando fechaChave
+decisao: se comparacao abreChave		{
+						fprintf(yyout, "inicioIf%d:\n", contadorIf);
+						stackIf[spStackIf++] = contadorIf++;
+						}
+				 sequenciaComandos fechaChave 	{
+							auxCondicional = stackIf[--spStackIf];
+							fprintf(yyout, "jumpI fimElse%d\n", auxCondicional);
+							}
+						senao abreChave 	{
+									fprintf(yyout, "inicioElse%d:\n", auxCondicional);
+									stackIf[spStackIf++] = auxCondicional;
+									} 
+								sequenciaComandos fechaChave 	{
+											auxCondicional = stackIf[--spStackIf];
+											fprintf(yyout, "fimElse%d:\n", auxCondicional);
+											}
+													
 ;
 
-comparacao: expressao operadorComparacao expressao
+comparacao: 
+  expressao maior expressao		{
+						fprintf(yyout, "loadI %d, r1\n", sp--);
+						fprintf(yyout, "load r1, r2\n");
+						fprintf(yyout, "loadI %d, r1\n", sp--);
+						fprintf(yyout, "load r1, r3\n");
+						fprintf(yyout, "comp r3, r2, r9\n");
+						fprintf(yyout, "cbr_GT r9, inicioIf%d, inicioElse%d\n", contadorIf, contadorIf);
+						}
+| expressao igual expressao		{
+						fprintf(yyout, "loadI %d, r1\n", sp--);
+						fprintf(yyout, "load r1, r2\n");
+						fprintf(yyout, "loadI %d, r1\n", sp--);
+						fprintf(yyout, "load r1, r3\n");
+						fprintf(yyout, "comp r3, r2, r9\n");
+						fprintf(yyout, "cbr_EQ r9, inicioIf%d, inicioElse%d\n", contadorIf, contadorIf);
+						}
+| expressao menor expressao		{
+						fprintf(yyout, "loadI %d, r1\n", sp--);
+						fprintf(yyout, "load r1, r2\n");
+						fprintf(yyout, "loadI %d, r1\n", sp--);
+						fprintf(yyout, "load r1, r3\n");
+						fprintf(yyout, "comp r3, r2, r9\n");
+						fprintf(yyout, "cbr_LT r9, inicioIf%d, inicioElse%d\n", contadorIf, contadorIf);
+						}
+| expressao				{
+						fprintf(yyout, "loadI %d, r1\n", sp--);
+						fprintf(yyout, "load r1, r2\n");
+						fprintf(yyout, "cbr r2, inicioIf%d, inicioElse%d\n", contadorIf, contadorIf);
+						}
 ;
 
-operadorComparacao:
-  maior
-| igual
-| menor
-;
 
+repeticao: enquanto  {
+				fprintf(yyout, "inicioWhile%d:\n", auxCondicional);
+				}
+		 comparacao abreChave sequenciaComandos fechaChave
+;
 
 %%
 

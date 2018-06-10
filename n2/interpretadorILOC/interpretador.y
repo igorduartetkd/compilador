@@ -5,6 +5,7 @@
 #include <math.h>
 char* resposta = 0;		//utilizado em caso de erro
 int regs[10];			//registradores (limitado a 10)
+int flags[10][6];		//flags para uso nos cbr_
 int memInt[500];		//memoria de inteiros
 char memChar[500];		//memoria de caracteres
 int linha[500];			//armazena a linha de cada label
@@ -24,7 +25,6 @@ FILE *yyin;			//arquivo de entrada
 int qtdLinha = 0;		//utilizado para armazenar as linhas nas posicoes corretas do vetor linha e labelN
 void pular(int linha);
 int aux;			//se precisar é so chamar
-short int testarBit(int reg, short int nbit);  //se o registrador em binario for 1 no bit nbit retorna 1 caso contrario retorna 0
 %}
 
 /* --- TOKENS OPERADORES DE OPERADORES ---*/
@@ -150,16 +150,16 @@ operacao: nop
 | cmp_GE 	reg separador reg separador reg		{if(!modoIdLabel){regs[$6] = regs[$2] >= regs[$4];}}
 | cmp_GT 	reg separador reg separador reg		{if(!modoIdLabel){regs[$6] = regs[$2] >  regs[$4];}}
 | cmp_NE 	reg separador reg separador reg		{if(!modoIdLabel){regs[$6] = regs[$2] != regs[$4];}} //proximo passo: composicao do $6
-| comp		reg separador reg separador reg		{if(!modoIdLabel){regs[$6] = 0;
-									  if(regs[$2] <  regs[$4]) regs[$6] += 1; //caso cmp = LT
-									  if(regs[$2] <= regs[$4]) regs[$6] += 2; //caso cmp = LE
-									  if(regs[$2] == regs[$4]) regs[$6] += 4; //caso cmp = EQ
-									  if(regs[$2] >= regs[$4]) regs[$6] += 8; //caso cmp = GE
-									  if(regs[$2] >  regs[$4]) regs[$6] += 16; //caso cmp = GT
-									  if(regs[$2] != regs[$4]) regs[$6] += 32; //caso cmp = NE
+| comp		reg separador reg separador reg		{if(!modoIdLabel){
+									flags[$6][0] = regs[$2] <  regs[$4]; //caso cmp = LT
+									flags[$6][1] = regs[$2] <= regs[$4]; //caso cmp = LE
+									flags[$6][2] = regs[$2] == regs[$4]; //caso cmp = EQ
+									flags[$6][3] = regs[$2] >= regs[$4]; //caso cmp = GE
+									flags[$6][4] = regs[$2] >  regs[$4]; //caso cmp = GT
+									flags[$6][5] = regs[$2] != regs[$4]; //caso cmp = NE
 									}}
 | cbr_LT 	reg separador label {if(!modoIdLabel){aux = buscarLabelLinha(nomeLabel); free(nomeLabel); nomeLabel = 0;}} 
-				    separador label  {if(!modoIdLabel){ if(testarBit($2, 0)){
+				    separador label  {if(!modoIdLabel){ if(flags[$6][0]){
 										pular(aux);
 									}else{		
 										pular(buscarLabelLinha(nomeLabel));
@@ -168,7 +168,7 @@ operacao: nop
 									}
 							}
 | cbr_LE 	reg separador label {if(!modoIdLabel){aux = buscarLabelLinha(nomeLabel); free(nomeLabel); nomeLabel = 0;}} 
-				    separador label {if(!modoIdLabel){ if(testarBit($2, 1)){
+				    separador label {if(!modoIdLabel){ if(flags[$6][1]){
 										pular(aux);
 									}else{		
 										pular(buscarLabelLinha(nomeLabel));
@@ -177,7 +177,7 @@ operacao: nop
 									}
 							}	
 | cbr_EQ 	reg separador label {if(!modoIdLabel){aux = buscarLabelLinha(nomeLabel); free(nomeLabel); nomeLabel = 0;}} 
-				    separador label {if(!modoIdLabel){ if(testarBit($2, 2)){
+				    separador label {if(!modoIdLabel){ if(flags[$6][2]){
 										pular(aux);
 									}else{		
 										pular(buscarLabelLinha(nomeLabel));
@@ -186,7 +186,7 @@ operacao: nop
 									}
 							}
 | cbr_GE 	reg separador label {if(!modoIdLabel){aux = buscarLabelLinha(nomeLabel); free(nomeLabel); nomeLabel = 0;}} 
-				    separador label {if(!modoIdLabel){ if(testarBit($2, 3)){
+				    separador label {if(!modoIdLabel){ if(flags[$6][3]){
 										pular(aux);
 									}else{		
 										pular(buscarLabelLinha(nomeLabel));
@@ -195,7 +195,7 @@ operacao: nop
 									}
 							}
 | cbr_GT 	reg separador label {if(!modoIdLabel){aux = buscarLabelLinha(nomeLabel); free(nomeLabel); nomeLabel = 0;}} 
-				    separador label {if(!modoIdLabel){ if(testarBit($2, 4)){
+				    separador label {if(!modoIdLabel){ if(flags[$6][4]){
 										pular(aux);
 									}else{		
 										pular(buscarLabelLinha(nomeLabel));
@@ -204,7 +204,7 @@ operacao: nop
 									}
 							}
 | cbr_NE	reg separador label {if(!modoIdLabel){aux = buscarLabelLinha(nomeLabel); free(nomeLabel); nomeLabel = 0;}} 
-				    separador label {if(!modoIdLabel){ if(testarBit($2, 5)){
+				    separador label {if(!modoIdLabel){ if(flags[$6][5]){
 										pular(aux);
 									}else{		
 										pular(buscarLabelLinha(nomeLabel));
@@ -281,19 +281,4 @@ void pular(int linha){
 	executar = 0;
 	linhaPular = linha;
 	yyrestart(yyin);	
-}
-
-short int testarBit(int reg, short int nbit){
-	int saida = 0;
-	int aux2;
-	for(int i = 0; i<6; i++){
-		aux2 = 5-i;
-		if(regs[reg] / pow (2, aux2)){
-			regs[reg] -= pow (2, aux2);
-			if(nbit == aux2){
-				saida = 1;
-			}
-		}
-	}
-	return saida;
 }

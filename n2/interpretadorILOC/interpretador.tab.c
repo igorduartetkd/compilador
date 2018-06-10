@@ -70,6 +70,7 @@
 #include <math.h>
 char* resposta = 0;		//utilizado em caso de erro
 int regs[10];			//registradores (limitado a 10)
+int flags[10][6];		//flags para uso nos cbr_
 int memInt[500];		//memoria de inteiros
 char memChar[500];		//memoria de caracteres
 int linha[500];			//armazena a linha de cada label
@@ -89,7 +90,6 @@ FILE *yyin;			//arquivo de entrada
 int qtdLinha = 0;		//utilizado para armazenar as linhas nas posicoes corretas do vetor linha e labelN
 void pular(int linha);
 int aux;			//se precisar é so chamar
-short int testarBit(int reg, short int nbit);  //se o registrador em binario for 1 no bit nbit retorna 1 caso contrario retorna 0
 
 #line 95 "interpretador.tab.c" /* yacc.c:339  */
 
@@ -1801,13 +1801,13 @@ yyreduce:
 
   case 60:
 #line 153 "interpretador.y" /* yacc.c:1646  */
-    {if(!modoIdLabel){regs[(yyvsp[0])] = 0;
-									  if(regs[(yyvsp[-4])] <  regs[(yyvsp[-2])]) regs[(yyvsp[0])] += 1; //caso cmp = LT
-									  if(regs[(yyvsp[-4])] <= regs[(yyvsp[-2])]) regs[(yyvsp[0])] += 2; //caso cmp = LE
-									  if(regs[(yyvsp[-4])] == regs[(yyvsp[-2])]) regs[(yyvsp[0])] += 4; //caso cmp = EQ
-									  if(regs[(yyvsp[-4])] >= regs[(yyvsp[-2])]) regs[(yyvsp[0])] += 8; //caso cmp = GE
-									  if(regs[(yyvsp[-4])] >  regs[(yyvsp[-2])]) regs[(yyvsp[0])] += 16; //caso cmp = GT
-									  if(regs[(yyvsp[-4])] != regs[(yyvsp[-2])]) regs[(yyvsp[0])] += 32; //caso cmp = NE
+    {if(!modoIdLabel){
+									flags[(yyvsp[0])][0] = regs[(yyvsp[-4])] <  regs[(yyvsp[-2])]; //caso cmp = LT
+									flags[(yyvsp[0])][1] = regs[(yyvsp[-4])] <= regs[(yyvsp[-2])]; //caso cmp = LE
+									flags[(yyvsp[0])][2] = regs[(yyvsp[-4])] == regs[(yyvsp[-2])]; //caso cmp = EQ
+									flags[(yyvsp[0])][3] = regs[(yyvsp[-4])] >= regs[(yyvsp[-2])]; //caso cmp = GE
+									flags[(yyvsp[0])][4] = regs[(yyvsp[-4])] >  regs[(yyvsp[-2])]; //caso cmp = GT
+									flags[(yyvsp[0])][5] = regs[(yyvsp[-4])] != regs[(yyvsp[-2])]; //caso cmp = NE
 									}}
 #line 1813 "interpretador.tab.c" /* yacc.c:1646  */
     break;
@@ -1820,7 +1820,7 @@ yyreduce:
 
   case 62:
 #line 162 "interpretador.y" /* yacc.c:1646  */
-    {if(!modoIdLabel){ if(testarBit((yyvsp[-5]), 0)){
+    {if(!modoIdLabel){ if(flags[(yyvsp[-1])][0]){
 										pular(aux);
 									}else{		
 										pular(buscarLabelLinha(nomeLabel));
@@ -1839,7 +1839,7 @@ yyreduce:
 
   case 64:
 #line 171 "interpretador.y" /* yacc.c:1646  */
-    {if(!modoIdLabel){ if(testarBit((yyvsp[-5]), 1)){
+    {if(!modoIdLabel){ if(flags[(yyvsp[-1])][1]){
 										pular(aux);
 									}else{		
 										pular(buscarLabelLinha(nomeLabel));
@@ -1858,7 +1858,7 @@ yyreduce:
 
   case 66:
 #line 180 "interpretador.y" /* yacc.c:1646  */
-    {if(!modoIdLabel){ if(testarBit((yyvsp[-5]), 2)){
+    {if(!modoIdLabel){ if(flags[(yyvsp[-1])][2]){
 										pular(aux);
 									}else{		
 										pular(buscarLabelLinha(nomeLabel));
@@ -1877,7 +1877,7 @@ yyreduce:
 
   case 68:
 #line 189 "interpretador.y" /* yacc.c:1646  */
-    {if(!modoIdLabel){ if(testarBit((yyvsp[-5]), 3)){
+    {if(!modoIdLabel){ if(flags[(yyvsp[-1])][3]){
 										pular(aux);
 									}else{		
 										pular(buscarLabelLinha(nomeLabel));
@@ -1896,7 +1896,7 @@ yyreduce:
 
   case 70:
 #line 198 "interpretador.y" /* yacc.c:1646  */
-    {if(!modoIdLabel){ if(testarBit((yyvsp[-5]), 4)){
+    {if(!modoIdLabel){ if(flags[(yyvsp[-1])][4]){
 										pular(aux);
 									}else{		
 										pular(buscarLabelLinha(nomeLabel));
@@ -1915,7 +1915,7 @@ yyreduce:
 
   case 72:
 #line 207 "interpretador.y" /* yacc.c:1646  */
-    {if(!modoIdLabel){ if(testarBit((yyvsp[-5]), 5)){
+    {if(!modoIdLabel){ if(flags[(yyvsp[-1])][5]){
 										pular(aux);
 									}else{		
 										pular(buscarLabelLinha(nomeLabel));
@@ -2231,25 +2231,10 @@ int buscarLabelLinha(char c[]){
 * continuar a partir de uma linha específica
 */
 void pular(int linha){
-	fclose(yyin);  //no reg deve conter a linha para saltar
+	fclose(yyin); 
 	yyin = fopen("teste.txt", "r"); 
 	yylineno = 1;
 	executar = 0;
 	linhaPular = linha;
 	yyrestart(yyin);	
-}
-
-short int testarBit(int reg, short int nbit){
-	int saida = 0;
-	int aux2;
-	for(int i = 0; i<6; i++){
-		aux2 = 5-i;
-		if(regs[reg] / pow (2, aux2)){
-			regs[reg] -= pow (2, aux2);
-			if(nbit == aux2){
-				saida = 1;
-			}
-		}
-	}
-	return saida;
 }
