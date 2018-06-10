@@ -18,10 +18,14 @@ unsigned int qtdVariavel = 0; 	//armazena a quantidade de variaveis que tem no p
 int buscarIdVariavel(char c[]);	//retorna o indice correspondente a variavel c
 unsigned int auxAtribuicao;
 unsigned int auxCondicional;
+unsigned int auxRepeticao;
 unsigned int contadorIf = 0;
 unsigned int contadorWhile = 0;
 unsigned int stackIf[500]; 	//pilha para armazenar os contadores de if
 unsigned int spStackIf = 0;	//stack point para o stackIf
+unsigned int stackWhile[500]; 	//pilha para armazenar os contadores de while
+unsigned int spStackWhile = 0;	//stack point para o stackwhile
+
 %}
 
 
@@ -54,8 +58,8 @@ unsigned int spStackIf = 0;	//stack point para o stackIf
 programa: sequenciaComandos end
 ;
 
-sequenciaComandos: comando 
-| sequenciaComandos pontoVirgula comando
+sequenciaComandos: comando pontoVirgula
+|   comando pontoVirgula sequenciaComandos
 ;
 
 comando: 
@@ -71,6 +75,17 @@ comando:
 declaracao: inteiro label 		{
 						strcpy(variavel[qtdVariavel++], nomeLabel);
 						free(nomeLabel); nomeLabel = 0;
+						}
+|inteiro label 		{
+			strcpy(variavel[qtdVariavel++], nomeLabel);
+			auxAtribuicao = buscarIdVariavel(nomeLabel);
+			free(nomeLabel); nomeLabel = 0;
+			} 	
+		menor igual expressao {
+						fprintf(yyout, "loadI %d, r1\n", sp--);
+						fprintf(yyout, "load r1, r2\n");
+						fprintf(yyout, "loadI %d, r3\n", auxAtribuicao);
+						fprintf(yyout, "store r2, r3\n");
 						}
 ;
 
@@ -138,7 +153,7 @@ fator: label	 			{
 						fprintf(yyout, "loadI %d, r2\n", $1);
 						fprintf(yyout, "store r2, r1\n");
 						}
-| abreParentese expressao fechaParentese
+| abreChave expressao fechaChave
 ;
 
 leitura: input1 listaIdentificadores
@@ -163,6 +178,7 @@ listaExpressoes:
 ;
 
 decisao: se comparacao abreChave		{
+						fprintf(yyout, " inicioIf%d, inicioElse%d\n", contadorIf, contadorIf); //...continuacao 
 						fprintf(yyout, "inicioIf%d:\n", contadorIf);
 						stackIf[spStackIf++] = contadorIf++;
 						}
@@ -177,47 +193,59 @@ decisao: se comparacao abreChave		{
 								sequenciaComandos fechaChave 	{
 											auxCondicional = stackIf[--spStackIf];
 											fprintf(yyout, "fimElse%d:\n", auxCondicional);
+											fprintf(yyout, "nop\n");
 											}
-													
 ;
 
 comparacao: 
   expressao maior expressao		{
-						fprintf(yyout, "loadI %d, r1\n", sp--);
-						fprintf(yyout, "load r1, r2\n");
-						fprintf(yyout, "loadI %d, r1\n", sp--);
-						fprintf(yyout, "load r1, r3\n");
-						fprintf(yyout, "comp r3, r2, r9\n");
-						fprintf(yyout, "cbr_GT r9, inicioIf%d, inicioElse%d\n", contadorIf, contadorIf);
+						fprintf(yyout, "loadI %d, r5\n", sp--);
+						fprintf(yyout, "load r5, r2\n");
+						fprintf(yyout, "loadI %d, r5\n", sp--);
+						fprintf(yyout, "load r5, r1\n");
+						fprintf(yyout, "comp r1, r2, r9\n");
+						fprintf(yyout, "cbr_GT r9, ");//continua...
 						}
 | expressao igual expressao		{
-						fprintf(yyout, "loadI %d, r1\n", sp--);
-						fprintf(yyout, "load r1, r2\n");
-						fprintf(yyout, "loadI %d, r1\n", sp--);
-						fprintf(yyout, "load r1, r3\n");
-						fprintf(yyout, "comp r3, r2, r9\n");
-						fprintf(yyout, "cbr_EQ r9, inicioIf%d, inicioElse%d\n", contadorIf, contadorIf);
+						fprintf(yyout, "loadI %d, r5\n", sp--);
+						fprintf(yyout, "load r5, r2\n");
+						fprintf(yyout, "loadI %d, r5\n", sp--);
+						fprintf(yyout, "load r5, r1\n");
+						fprintf(yyout, "comp r1, r2, r9\n");
+						fprintf(yyout, "cbr_EQ r9, ");//continua...
 						}
 | expressao menor expressao		{
-						fprintf(yyout, "loadI %d, r1\n", sp--);
-						fprintf(yyout, "load r1, r2\n");
-						fprintf(yyout, "loadI %d, r1\n", sp--);
-						fprintf(yyout, "load r1, r3\n");
-						fprintf(yyout, "comp r3, r2, r9\n");
-						fprintf(yyout, "cbr_LT r9, inicioIf%d, inicioElse%d\n", contadorIf, contadorIf);
+						fprintf(yyout, "loadI %d, r5\n", sp--);
+						fprintf(yyout, "load r5, r2\n");
+						fprintf(yyout, "loadI %d, r5\n", sp--);
+						fprintf(yyout, "load r5, r1\n");
+						fprintf(yyout, "comp r1, r2, r9\n");
+						fprintf(yyout, "cbr_LT r9, ");//continua...
 						}
 | expressao				{
-						fprintf(yyout, "loadI %d, r1\n", sp--);
-						fprintf(yyout, "load r1, r2\n");
-						fprintf(yyout, "cbr r2, inicioIf%d, inicioElse%d\n", contadorIf, contadorIf);
+						fprintf(yyout, "loadI %d, r5\n", sp--);
+						fprintf(yyout, "load r5, r1\n");
+						fprintf(yyout, "cbr r1, "); //continua...
 						}
 ;
 
 
-repeticao: enquanto  {
-				fprintf(yyout, "inicioWhile%d:\n", auxCondicional);
-				}
-		 comparacao abreChave sequenciaComandos fechaChave
+repeticao: enquanto {
+			fprintf(yyout, "inicioWhile%d:\n", contadorWhile);
+			stackWhile[spStackWhile++] = contadorWhile++;
+			}
+		 comparacao abreChave {
+						auxRepeticao = stackWhile[--spStackWhile];
+						fprintf(yyout, " iniWhileCod%d, fimWhile%d\n", auxRepeticao, auxRepeticao); //...continuacao 
+						fprintf(yyout, "iniWhileCod%d:\n", auxRepeticao);
+						stackWhile[spStackWhile++] = auxRepeticao;
+						}
+					sequenciaComandos fechaChave {
+								auxRepeticao = stackWhile[--spStackWhile];
+								fprintf(yyout, "jumpI inicioWhile%d\n", auxRepeticao);
+								fprintf(yyout, "fimWhile%d:\n", auxRepeticao);
+								fprintf(yyout, "nop\n");
+								}
 ;
 
 %%
@@ -248,5 +276,4 @@ int buscarIdVariavel(char c[]){
 			return i+400;	//para utilizar apenas os 400 ultimos enderecos de memoria do ILOC
 		}
 	}
-}
-
+}								

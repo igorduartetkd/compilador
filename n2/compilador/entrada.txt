@@ -1,19 +1,10 @@
-se 3 > 5 {
-	output 1;
-} senao{
-	output 2;
-};
-output 3;
+int teste <= 0;
 se 3 = 5 {
 	output 4;
 } senao{
-	output 5;
+	enquanto teste < 5 {
+		output teste;
+		teste <= teste + 1;
+	};
 };
-output 6;
-se 3 < 5 {
-	output 7;
-} senao{
-	output 8;
-};
-output 9;
 fim

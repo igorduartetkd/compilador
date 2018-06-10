@@ -15,8 +15,8 @@ short int executar = 1;
 "-"		{inicio if(executar){ return sub;}		}  
 "*"		{inicio if(executar){ return mult;}		} 
 "/"		{inicio if(executar){ return div1;}		}
-"<<"	{inicio if(executar){ return shiftLeft;}		}
-">>"	{inicio if(executar){ return shiftRight;}		}
+"<<"		{inicio if(executar){ return shiftLeft;}	}
+">>"		{inicio if(executar){ return shiftRight;}	}
 "&"		{inicio if(executar){ return and;}		}
 "|"		{inicio if(executar){ return or;}		}
 "^"		{inicio if(executar){ return xor;}		}
