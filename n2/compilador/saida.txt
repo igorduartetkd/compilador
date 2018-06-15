@@ -3,7 +3,7 @@ loadI 0, r2
 store r2, r1
 loadI 1, r1
 load r1, r2
-loadI 400, r3
+loadI 300, r3
 store r2, r3
 loadI 1, r1
 loadI 3, r2
@@ -27,7 +27,7 @@ output r2
 jumpI fimElse0
 inicioElse0:
 inicioWhile0:
-loadI 400, r2
+loadI 300, r2
 load r2, r3
 loadI 1, r1
 store r3, r1
@@ -41,14 +41,14 @@ load r5, r1
 comp r1, r2, r9
 cbr_LT r9,  iniWhileCod0, fimWhile0
 iniWhileCod0:
-loadI 400, r2
+loadI 300, r2
 load r2, r3
 loadI 1, r1
 store r3, r1
 loadI 1, r1
 load r1, r2
 output r2
-loadI 400, r2
+loadI 300, r2
 load r2, r3
 loadI 1, r1
 store r3, r1
@@ -64,7 +64,7 @@ loadI 1, r2
 store r1, r2
 loadI 1, r1
 load r1, r2
-loadI 400, r3
+loadI 300, r3
 store r2, r3
 jumpI inicioWhile0
 fimWhile0:

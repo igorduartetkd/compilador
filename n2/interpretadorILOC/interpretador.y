@@ -213,7 +213,7 @@ operacao: nop
 									}
 							}
 
-| inputi 	reg num					{if(!modoIdLabel){regs[$2] = $3;}}
+| inputi 	reg					{if(!modoIdLabel){scanf("%d", &aux); regs[$2] = aux;}}
 | outputi 	reg					{if(!modoIdLabel){int aux = $2; printf("%d", regs[aux]);}}
 
 | inputc 	reg caractere				{if(!modoIdLabel){regs[$2] = $3;}}

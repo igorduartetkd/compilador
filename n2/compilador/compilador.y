@@ -19,6 +19,7 @@ int buscarIdVariavel(char c[]);	//retorna o indice correspondente a variavel c
 unsigned int auxAtribuicao;
 unsigned int auxCondicional;
 unsigned int auxRepeticao;
+unsigned int aux;
 unsigned int contadorIf = 0;
 unsigned int contadorWhile = 0;
 unsigned int stackIf[500]; 	//pilha para armazenar os contadores de if
@@ -156,12 +157,26 @@ fator: label	 			{
 | abreChave expressao fechaChave
 ;
 
-leitura: input1 listaIdentificadores
+leitura: input1 
+		 listaIdentificadores
 ;
 
 listaIdentificadores:
-| label
-| label virgula listaIdentificadores
+| label {
+		aux = buscarIdVariavel(nomeLabel);
+		free(nomeLabel); nomeLabel = 0;
+		fprintf(yyout, "intput %d, r1\n", ++sp);	
+		fprintf(yyout, "loadI %d, r2\n", aux);	
+		fprintf(yyout, "store r1, r2\n");
+		}
+| label {
+		aux = buscarIdVariavel(nomeLabel);
+		free(nomeLabel); nomeLabel = 0;
+		fprintf(yyout, "intput %d, r1\n", ++sp);	
+		fprintf(yyout, "loadI %d, r2\n", aux);	
+		fprintf(yyout, "store r1, r2\n");
+		}
+	virgula listaIdentificadores
 ;
 
 impressao:
@@ -273,7 +288,7 @@ int yyerror(char *s){
 int buscarIdVariavel(char c[]){
 	for(int i=0; i< qtdVariavel; i++){
 		if(strcmp(variavel[i], c) == 0){
-			return i+400;	//para utilizar apenas os 400 ultimos enderecos de memoria do ILOC
+			return i+300;	//para utilizar apenas os 200 ultimos enderecos de memoria do ILOC
 		}
 	}
 }								

@@ -480,9 +480,9 @@ static const yytype_uint8 yyrline[] =
 {
        0,    58,    58,    61,    62,    65,    66,    67,    68,    69,
       70,    71,    72,    75,    79,    79,    93,    93,   102,   111,
-     120,   123,   132,   141,   144,   151,   156,   159,   162,   163,
-     164,   168,   175,   176,   177,   180,   185,   189,   180,   201,
-     209,   217,   225,   233,   237,   233
+     120,   123,   132,   141,   144,   151,   156,   159,   163,   164,
+     165,   169,   176,   177,   178,   181,   186,   190,   181,   202,
+     210,   218,   226,   234,   238,   234
 };
 #endif
 
@@ -1431,7 +1431,7 @@ yyreduce:
     break;
 
   case 31:
-#line 168 "compilador.y" /* yacc.c:1646  */
+#line 169 "compilador.y" /* yacc.c:1646  */
     {
 						fprintf(yyout, "loadI %d, r1\n", sp--);
 						fprintf(yyout, "load r1, r2\n");
@@ -1441,7 +1441,7 @@ yyreduce:
     break;
 
   case 35:
-#line 180 "compilador.y" /* yacc.c:1646  */
+#line 181 "compilador.y" /* yacc.c:1646  */
     {
 						fprintf(yyout, " inicioIf%d, inicioElse%d\n", contadorIf, contadorIf); //...continuacao 
 						fprintf(yyout, "inicioIf%d:\n", contadorIf);
@@ -1451,7 +1451,7 @@ yyreduce:
     break;
 
   case 36:
-#line 185 "compilador.y" /* yacc.c:1646  */
+#line 186 "compilador.y" /* yacc.c:1646  */
     {
 							auxCondicional = stackIf[--spStackIf];
 							fprintf(yyout, "jumpI fimElse%d\n", auxCondicional);
@@ -1460,7 +1460,7 @@ yyreduce:
     break;
 
   case 37:
-#line 189 "compilador.y" /* yacc.c:1646  */
+#line 190 "compilador.y" /* yacc.c:1646  */
     {
 									fprintf(yyout, "inicioElse%d:\n", auxCondicional);
 									stackIf[spStackIf++] = auxCondicional;
@@ -1469,7 +1469,7 @@ yyreduce:
     break;
 
   case 38:
-#line 193 "compilador.y" /* yacc.c:1646  */
+#line 194 "compilador.y" /* yacc.c:1646  */
     {
 											auxCondicional = stackIf[--spStackIf];
 											fprintf(yyout, "fimElse%d:\n", auxCondicional);
@@ -1479,7 +1479,7 @@ yyreduce:
     break;
 
   case 39:
-#line 201 "compilador.y" /* yacc.c:1646  */
+#line 202 "compilador.y" /* yacc.c:1646  */
     {
 						fprintf(yyout, "loadI %d, r5\n", sp--);
 						fprintf(yyout, "load r5, r2\n");
@@ -1492,7 +1492,7 @@ yyreduce:
     break;
 
   case 40:
-#line 209 "compilador.y" /* yacc.c:1646  */
+#line 210 "compilador.y" /* yacc.c:1646  */
     {
 						fprintf(yyout, "loadI %d, r5\n", sp--);
 						fprintf(yyout, "load r5, r2\n");
@@ -1505,7 +1505,7 @@ yyreduce:
     break;
 
   case 41:
-#line 217 "compilador.y" /* yacc.c:1646  */
+#line 218 "compilador.y" /* yacc.c:1646  */
     {
 						fprintf(yyout, "loadI %d, r5\n", sp--);
 						fprintf(yyout, "load r5, r2\n");
@@ -1518,7 +1518,7 @@ yyreduce:
     break;
 
   case 42:
-#line 225 "compilador.y" /* yacc.c:1646  */
+#line 226 "compilador.y" /* yacc.c:1646  */
     {
 						fprintf(yyout, "loadI %d, r5\n", sp--);
 						fprintf(yyout, "load r5, r1\n");
@@ -1528,7 +1528,7 @@ yyreduce:
     break;
 
   case 43:
-#line 233 "compilador.y" /* yacc.c:1646  */
+#line 234 "compilador.y" /* yacc.c:1646  */
     {
 			fprintf(yyout, "inicioWhile%d:\n", contadorWhile);
 			stackWhile[spStackWhile++] = contadorWhile++;
@@ -1537,7 +1537,7 @@ yyreduce:
     break;
 
   case 44:
-#line 237 "compilador.y" /* yacc.c:1646  */
+#line 238 "compilador.y" /* yacc.c:1646  */
     {
 						auxRepeticao = stackWhile[--spStackWhile];
 						fprintf(yyout, " iniWhileCod%d, fimWhile%d\n", auxRepeticao, auxRepeticao); //...continuacao 
@@ -1548,7 +1548,7 @@ yyreduce:
     break;
 
   case 45:
-#line 243 "compilador.y" /* yacc.c:1646  */
+#line 244 "compilador.y" /* yacc.c:1646  */
     {
 								auxRepeticao = stackWhile[--spStackWhile];
 								fprintf(yyout, "jumpI inicioWhile%d\n", auxRepeticao);
@@ -1787,7 +1787,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 251 "compilador.y" /* yacc.c:1906  */
+#line 252 "compilador.y" /* yacc.c:1906  */
 
 
 int main(int argc, char **argv){
@@ -1813,7 +1813,7 @@ int yyerror(char *s){
 int buscarIdVariavel(char c[]){
 	for(int i=0; i< qtdVariavel; i++){
 		if(strcmp(variavel[i], c) == 0){
-			return i+400;	//para utilizar apenas os 400 ultimos enderecos de memoria do ILOC
+			return i+300;	//para utilizar apenas os 200 ultimos enderecos de memoria do ILOC
 		}
 	}
 }								

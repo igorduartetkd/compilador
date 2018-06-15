@@ -834,12 +834,12 @@ YY_RULE_SETUP
 case 5:
 YY_RULE_SETUP
 #line 18 "compilador.l"
-{inicio if(executar){ return shiftLeft;}		}
+{inicio if(executar){ return shiftLeft;}	}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 19 "compilador.l"
-{inicio if(executar){ return shiftRight;}		}
+{inicio if(executar){ return shiftRight;}	}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
